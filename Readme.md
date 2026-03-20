@@ -1,1 +1,1 @@
-Con chó Washington
+Con chó Washington bi ngu
