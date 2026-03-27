@@ -9,7 +9,9 @@ app.use(cors());
 
 //API login chua co database
 app.post(`/login`, (req, res) => {
-  const { email, password } = req.body;
+  const email = req.body.email;
+  const password = req.body.password;
+
 
   if (email === "admin@gmail.com" && password === "123") {
     res.json({ message: "Login thanh cong" });
