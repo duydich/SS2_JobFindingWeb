@@ -40,7 +40,7 @@ function Login() {
 
                 <div className="forgot">Forgot password?</div>
 
-                <button className="login-btn">Login</button>
+                <button className="login-btn" onClick={handleLogin}>Login</button>
 
                 <p className="or">Or login with</p>
 
