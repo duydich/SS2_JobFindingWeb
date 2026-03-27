@@ -6,7 +6,7 @@ function Login() {
     const [password, setPassword] = useState("")
 
     const handleLogin = async () => {
-        const res = await fetch("http://localhost:5000/login", {
+        const res = await fetch("http://localhost:5000/api/login", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ email, password })
@@ -29,13 +29,23 @@ function Login() {
                 <label>Email</label>
                 <div className="input-group">
                     <span>"logo email"</span>
-                    <input type="text" placeholder="Email" />
+                    <input
+                        type="text"
+                        placeholder="Email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                    />
                 </div>
 
                 <label>Password</label>
                 <div className="input-group">
                     <span>"logo password"</span>
-                    <input type="password" placeholder="Password" />
+                    <input
+                        type="password"
+                        placeholder="Password"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                    />
                 </div>
 
                 <div className="forgot">Forgot password?</div>

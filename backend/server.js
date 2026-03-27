@@ -1,36 +1,19 @@
 const express = require("express");
 const cors = require("cors");
+const connectDB = require("./dbconfig/dbConnection");
+const authRoutes = require("./routes/authRoutes");
 
 const app = express();
 
-// Middleware
-app.use(express.json());
-app.use(cors());
+// 1. Middleware
+app.use(cors()); // cho phép frontend gọi API
+app.use(express.json()); // đọc JSON
 
-//API login chua co database
-app.post(`/login`, (req, res) => {
-  const email = req.body.email;
-  const password = req.body.password;
+// 2. Kết nối DB
+connectDB();
 
-
-  if (email === "admin@gmail.com" && password === "123") {
-    res.json({ message: "Login thanh cong" });
-  }
-  else {
-    res.status(401).json({ message: "Sai tai khoan" })
-  }
-});
-
-
-// Route test
-app.get("/", (req, res) => {
-  res.send("API is running");
-});
-
-//API test
-app.get("/api/test", (req, res) => {
-  res.json({ message: "Backend OK" });
-});
+/// 3. Routes
+app.use("/api", authRoutes);
 
 // Start server
 const PORT = 5000;
