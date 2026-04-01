@@ -1,42 +1,114 @@
 const User = require("../models/userModels");
+const bcrypt = require("bcryptjs");
 
+
+// ================= REGISTER =================
+const register = async (req, res) => {
+    try {
+        const { name, email, password, role } = req.body;
+
+        // 1. Validate
+        if (!name || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: "Missing required fields",
+            });
+        }
+
+        // 2. Clean data
+        name = name.trim();
+        email = email.trim().toLowerCase();
+        password = password.trim();
+
+        // 3. Check email tồn tại
+        const existingUser = await User.findOne({ email });
+        if (existingUser) {
+            return res.status(400).json({
+                success: false,
+                message: "Email already exists",
+            });
+        }
+
+        // 4. Hash password 
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // 5. Create user
+        const user = await User.create({
+            name,
+            email,
+            password: hashedPassword,
+            role: role || "student",
+            avatar: "",
+        });
+
+        console.log("User registered:", user.email);
+
+        // 6. Response (không trả password)
+        return res.status(201).json({
+            success: true,
+            message: "Register successful",
+            data: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+            },
+        });
+
+    } catch (error) {
+        console.error("Register error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Server error",
+        });
+    }
+};
+
+
+
+// ================= LOGIN =================
 const login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        let { email, password } = req.body;
 
         // 1. Validate
         if (!email || !password) {
             return res.status(400).json({
                 success: false,
-                message: "Missing email or password"
+                message: "Missing email or password",
             });
         }
 
-        // 2. Check user
-        const user = await User.findOne({ email }).select("+password");
+        // 2. Clean data
+        email = email.trim().toLowerCase();
+        password = password.trim();
+
+        // 3. Check user tồn tại
+        const user = await User.findOne({ email });
         if (!user) {
             console.log("Login fail: User not found:", email);
 
-            return res.status(400).json({
+            return res.status(401).json({
                 success: false,
-                message: "Invalid credentials"
+                message: "Invalid credentials",
             });
         }
 
-        // 3. Compare password
-        const isMatch = password === user.password;
+        // 4. Compare password 
+        const isMatch = await bcrypt.compare(password, user.password);
         if (!isMatch) {
             console.log("Login fail: Wrong password:", email);
 
-            return res.status(400).json({
+            return res.status(401).json({
                 success: false,
-                message: "Invalid credentials"
+                message: "Invalid credentials",
             });
         }
 
         console.log("User logged in:", user.email);
 
-        // 4. Response
+        // 5. Response
         return res.status(200).json({
             success: true,
             message: "Login successful",
@@ -45,7 +117,7 @@ const login = async (req, res) => {
                 name: user.name,
                 email: user.email,
                 role: user.role,
-            }
+            },
         });
 
     } catch (error) {
@@ -53,9 +125,10 @@ const login = async (req, res) => {
 
         return res.status(500).json({
             success: false,
-            message: "Server error"
+            message: "Server error",
         });
     }
 };
 
-module.exports = { login };
+
+module.exports = { register, login };

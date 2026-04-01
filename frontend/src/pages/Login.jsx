@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./Login.css";
+import { Link } from "react-router-dom";
 
 function Login() {
     const [email, setEmail] = useState("")
@@ -14,6 +15,12 @@ function Login() {
 
         const data = await res.json();
         console.log(data);
+
+        if (data.success) {
+            alert("Đăng nhập thành công");
+        } else {
+            alert(data.message);
+        }
 
     };
 
@@ -52,11 +59,7 @@ function Login() {
 
                 <button className="login-btn" onClick={handleLogin}>Login</button>
 
-                <p className="or">Or login with</p>
-
-                <button className="google-btn">Google</button>
-
-                <p>1 trong 2 cai</p>
+                <p className="or">Or login with</p>http://localhost:5173/register
 
                 <button className="google-btn">
                     <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" />
@@ -64,7 +67,8 @@ function Login() {
                 </button>
 
                 <p className="register">
-                    Don't have an account yet? <span>Register now</span>
+                    Don't have an account yet?{" "}
+                    <Link to="/register">Register now</Link>
                 </p>
 
             </div>
