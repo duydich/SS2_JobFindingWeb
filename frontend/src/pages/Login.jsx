@@ -59,7 +59,7 @@ function Login() {
 
                 <button className="login-btn" onClick={handleLogin}>Login</button>
 
-                <p className="or">Or login with</p>http://localhost:5173/register
+                <p className="or">Or login with</p>
 
                 <button className="google-btn">
                     <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" />
