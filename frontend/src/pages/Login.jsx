@@ -1,10 +1,11 @@
 import { useState } from "react";
-import "./Login.css";
 import { Link } from "react-router-dom";
+import { Mail, Lock, Briefcase } from "lucide-react";
+import "./Login.css";
 
 function Login() {
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
+    const [email, setEmail] = useState("");
+    const [password, setPassword] = useState("");
 
     const handleLogin = async () => {
         const res = await fetch("http://localhost:5000/api/login", {
@@ -14,28 +15,33 @@ function Login() {
         });
 
         const data = await res.json();
-        console.log(data);
 
         if (data.success) {
             alert("Đăng nhập thành công");
         } else {
             alert(data.message);
         }
-
     };
 
     return (
         <div className="login-container">
             <div className="login-card">
 
-                <h2>Welcomeback</h2>
+                {/* LOGO */}
+                <div className="logo">
+                    <Briefcase size={20} />
+                    <span>JobFinder</span>
+                </div>
+
+                <h2>Welcome to JobFinder</h2>
                 <p className="subtitle">
-                    Build an outstanding profile together and receive ideal career opportunities
+                    Create an account to start finding part-time jobs
                 </p>
 
-                <label>Email</label>
+                {/* EMAIL */}
+                <label>EMAIL</label>
                 <div className="input-group">
-                    <span>"logo email"</span>
+                    <span><Mail size={16} /></span>
                     <input
                         type="text"
                         placeholder="Email"
@@ -44,9 +50,10 @@ function Login() {
                     />
                 </div>
 
-                <label>Password</label>
+                {/* PASSWORD */}
+                <label>PASSWORD</label>
                 <div className="input-group">
-                    <span>"logo password"</span>
+                    <span><Lock size={16} /></span>
                     <input
                         type="password"
                         placeholder="Password"
@@ -57,24 +64,24 @@ function Login() {
 
                 <div className="forgot">Forgot password?</div>
 
-                <button className="login-btn" onClick={handleLogin}>Login</button>
+                <button className="login-btn" onClick={handleLogin}>
+                    Login
+                </button>
 
                 <p className="or">Or login with</p>
 
                 <button className="google-btn">
-                    <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" />
-                    Google
+                    Continue with Google
                 </button>
 
                 <p className="register">
-                    Don't have an account yet?{" "}
+                    Don't have an account?{" "}
                     <Link to="/register">Register now</Link>
                 </p>
 
             </div>
         </div>
     );
-
 }
-export default Login;
 
+export default Login;

@@ -1,6 +1,7 @@
 import { useState } from "react";
-import "./Login.css"; // dùng lại css tam thoi
 import { Link } from "react-router-dom";
+import { User, Mail, Lock, Briefcase } from "lucide-react";
+import "./Login.css";
 
 function Register() {
     const [name, setName] = useState("");
@@ -16,17 +17,15 @@ function Register() {
             });
 
             const data = await res.json();
-            console.log(data);
 
             if (data.success) {
-                alert("Đăng ký thành công ");
+                alert("Đăng ký thành công");
             } else {
                 alert(data.message);
             }
 
         } catch (error) {
-            console.error(error);
-            alert("Lỗi kết nối server ");
+            alert("Lỗi kết nối server");
         }
     };
 
@@ -34,27 +33,33 @@ function Register() {
         <div className="login-container">
             <div className="login-card">
 
-                <h2>Create Account</h2>
+                {/* LOGO */}
+                <div className="logo">
+                    <Briefcase size={20} />
+                    <span>JobFinder</span>
+                </div>
+
+                <h2>Create your account</h2>
                 <p className="subtitle">
-                    Join us and explore career opportunities
+                    Join us and explore part-time job opportunities
                 </p>
 
                 {/* NAME */}
-                <label>Name</label>
+                <label>FULL NAME</label>
                 <div className="input-group">
-                    <span>"logo name"</span>
+                    <span><User size={16} /></span>
                     <input
                         type="text"
-                        placeholder="Your name"
+                        placeholder="Full name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
                     />
                 </div>
 
                 {/* EMAIL */}
-                <label>Email</label>
+                <label>EMAIL</label>
                 <div className="input-group">
-                    <span>"logo email"</span>
+                    <span><Mail size={16} /></span>
                     <input
                         type="text"
                         placeholder="Email"
@@ -64,9 +69,9 @@ function Register() {
                 </div>
 
                 {/* PASSWORD */}
-                <label>Password</label>
+                <label>PASSWORD</label>
                 <div className="input-group">
-                    <span>"logo password"</span>
+                    <span><Lock size={16} /></span>
                     <input
                         type="password"
                         placeholder="Password"
@@ -79,11 +84,10 @@ function Register() {
                     Register
                 </button>
 
-                <p className="or">Or register with</p>
+                <p className="or">Or continue with</p>
 
                 <button className="google-btn">
-                    <img src="https://cdn-icons-png.flaticon.com/512/281/281764.png" />
-                    Google
+                    Continue with Google
                 </button>
 
                 <p className="register">
