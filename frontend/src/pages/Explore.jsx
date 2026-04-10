@@ -1,19 +1,12 @@
-import React from "react";
+import { useState } from "react";
 import "./Explore.css";
-import {
-  Search,
-  MapPin,
-  Heart,
-  Briefcase,
-  User,
-  LogOut,
-  Coffee,
-  ShoppingBag,
-  Monitor,
-  Megaphone
-} from "lucide-react";
+import { Search, MapPin, Heart, Briefcase, User, LogOut, Coffee, ShoppingBag, Monitor, Megaphone } from "lucide-react";
 
 const Explore = () => {
+
+  const [jobtitle, setJobtitle] = useState("");
+  const [location, setLocation] = useState("");
+
 
   const jobs = [
     {
@@ -75,12 +68,23 @@ const Explore = () => {
         <div className="search-box">
           <div className="input">
             <Briefcase size={16} />
-            <input placeholder="Job title..." />
+            <input
+              type="text"
+              placeholder="Job title..."
+              value={jobtitle}
+              onChange={(e) => setJobtitle(e.target.value)}
+            />
+
           </div>
 
           <div className="input">
             <MapPin size={16} />
-            <input placeholder="Location..." />
+            <input
+              type="text"
+              placeholder="Location..."
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
           </div>
 
           <button>Search Jobs</button>
@@ -150,7 +154,7 @@ const Explore = () => {
         <h2>Jobs near you</h2>
 
         <div className="job-row">
-          {jobs.slice(0,3).map((job, i) => (
+          {jobs.slice(0, 3).map((job, i) => (
             <div className="job-large" key={i}>
               <img src={job.img} alt="" />
 

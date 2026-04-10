@@ -63,8 +63,16 @@ body {
   gap: 10px;
   background: white;
   padding: 14px;
-  border-radius: 14px;
+  border-radius: 100px;
   flex: 1;
+}
+
+.input input {
+  border: none;
+  outline: none;
+  background: transparent;  
+  width: 100%;
+  font-size: 14px;
 }
 
 button {

@@ -1,11 +1,13 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Briefcase } from "lucide-react";
 import "./Login.css";
 
 function Login() {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const navigate = useNavigate();
 
     const handleLogin = async () => {
         const res = await fetch("http://localhost:5000/api/login", {
@@ -18,6 +20,7 @@ function Login() {
 
         if (data.success) {
             alert("Đăng nhập thành công");
+            navigate("/explore");
         } else {
             alert(data.message);
         }
