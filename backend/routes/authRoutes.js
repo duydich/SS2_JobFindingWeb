@@ -11,6 +11,7 @@ const { updateUser } = require("../controllers/authControllers");
 router.post("/register", register);
 router.post("/login", login);
 
+// API info
 router.get("/profile/:id", getProfile);
 router.put("/update/:id", updateUser);
 
