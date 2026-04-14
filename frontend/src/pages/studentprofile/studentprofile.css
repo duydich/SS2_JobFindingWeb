@@ -1,0 +1,182 @@
+/* ===== TỔNG THỂ ===== */
+body {
+  margin: 0;
+  background-color: #f8fafc;
+  font-family: "Inter", sans-serif;
+  color: #0f172a;
+}
+
+.profile-container {
+  max-width: 1100px;
+  margin: 40px auto;
+  padding: 0 20px;
+}
+
+/* ===== HEADER ===== */
+.profile-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+
+.profile-header h2 {
+  font-size: 28px;
+  margin: 0;
+  color: #1e293b;
+}
+
+/* NÚT BẤM (BUTTONS) */
+.save-btn {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.save-btn:hover {
+  background-color: #1d4ed8;
+}
+
+.discard {
+  background: transparent;
+  color: #64748b;
+  border: none;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 10px 24px;
+  transition: 0.2s;
+}
+
+.discard:hover {
+  color: #0f172a;
+  text-decoration: underline;
+}
+
+/* ===== BỐ CỤC GRID 2 CỘT ===== */
+.profile-grid {
+  display: grid;
+  grid-template-columns: 1fr 2fr; /* Cột trái 1 phần, cột phải 2 phần */
+  gap: 24px;
+}
+
+.left, .right {
+  display: flex;
+  flex-direction: column;
+  gap: 24px; /* Khoảng cách giữa các thẻ Card */
+}
+
+/* ===== THẺ CARD ===== */
+.card {
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  border: 1px solid #e2e8f0;
+}
+
+.card h4 {
+  margin: 0 0 20px 0;
+  color: #2563eb;
+  font-size: 16px;
+  font-weight: 600;
+}
+
+/* ===== FORMS (INPUT & LABEL) ===== */
+label {
+  display: block;
+  font-size: 12px;
+  font-weight: 700;
+  color: #64748b;
+  margin-top: 16px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Bỏ margin-top cho label đầu tiên trong card để đỡ bị khoảng trống thừa */
+.card label:nth-of-type(1) {
+  margin-top: 0;
+}
+
+input, textarea {
+  width: 100%;
+  padding: 12px 16px;
+  background-color: #f1f5f9;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  color: #1e293b;
+  outline: none;
+  transition: 0.2s;
+  box-sizing: border-box; /* Quan trọng để input không bị tràn ra ngoài thẻ card */
+}
+
+input:focus, textarea:focus {
+  background-color: #ffffff;
+  border-color: #2563eb;
+}
+
+textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* Chia 2 input trên cùng 1 hàng */
+.row {
+  display: flex;
+  gap: 16px;
+}
+
+.row > div {
+  flex: 1; /* Mỗi input chiếm 50% */
+}
+
+/* ===== AVATAR ===== */
+.avatar-box {
+  width: 120px;
+  height: 120px;
+  margin: 0 auto 16px auto; /* Căn giữa avatar */
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #e2e8f0;
+}
+
+.avatar-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.hint {
+  text-align: center;
+  font-size: 13px;
+  color: #64748b;
+  margin: 0;
+}
+
+/* ===== FOOTER ===== */
+.profile-footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 16px;
+  margin-top: 30px;
+  padding-top: 20px;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* ===== RESPONSIVE (Dành cho điện thoại) ===== */
+@media (max-width: 768px) {
+  .profile-grid {
+    grid-template-columns: 1fr; /* Gộp thành 1 cột trên màn hình nhỏ */
+  }
+  .row {
+    flex-direction: column;
+    gap: 0;
+  }
+}

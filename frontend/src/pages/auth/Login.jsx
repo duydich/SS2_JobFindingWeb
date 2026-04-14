@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Briefcase } from "lucide-react";
-import "./Login.css";
+import "./login.css";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -20,7 +20,21 @@ function Login() {
 
         if (data.success) {
             alert("Đăng nhập thành công");
-            navigate("/explore");
+            // lấy user object
+            const user = data.data;
+
+            // Lấy role từ object user
+            const role = user.role;  // Thêm dòng này
+
+            // chỉ lưu ID
+            localStorage.setItem("userId", user._id);
+
+            // redirect theo role
+            if (role === "recruiter") {
+                navigate("/recruiter");
+            } else {
+                navigate("/explore"); // default = student
+            }
         } else {
             alert(data.message);
         }
@@ -38,7 +52,7 @@ function Login() {
 
                 <h2>Welcome to JobFinder</h2>
                 <p className="subtitle">
-                    Create an account to start finding part-time jobs
+                    Sign in to continue finding part-time jobs
                 </p>
 
                 {/* EMAIL */}

@@ -1,10 +1,9 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import AboutUs from "./pages/AboutUs";
-import Explore from "./pages/Explore";
-
+import AboutUs from "./pages/about/AboutUs";
+import Login from "./pages/auth/Login";
+import Register from "./pages/auth/Register";
+import Explore from "./pages/explore/Explore";
+import StudentProfile from "./pages/studentprofile/StudentProfile"
 
 function App() {
   return (
@@ -14,6 +13,7 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/studentprofile" element={<StudentProfile />} />
       </Routes>
     </BrowserRouter>
   );

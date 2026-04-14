@@ -7,18 +7,24 @@ function Register() {
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [isRecruiter, setIsRecruiter] = useState(false);
+
+
+
 
     const handleRegister = async () => {
         try {
+            const role = isRecruiter ? "recruiter" : "student";
             const res = await fetch("http://localhost:5000/api/register", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ name, email, password })
+                body: JSON.stringify({ name, email, password, role })
             });
 
             const data = await res.json();
 
             if (data.success) {
+                console.log(isRecruiter);
                 alert("Đăng ký thành công");
             } else {
                 alert(data.message);
@@ -78,6 +84,19 @@ function Register() {
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                     />
+                </div>
+
+                {/* CHECKBOX_RECRUITER */}
+                <label>WANT TO BE RECRUITER?</label>
+                <div className="checkbox-group">
+                    <input
+                        type="checkbox"
+                        name="check"
+                        id="recruiter role checkbox"
+                        value={isRecruiter}
+                        onChange={(e) => setIsRecruiter(e.target.checked)}
+                    />
+                        <label for="recruiter role checkbox">Register as recruiter</label>
                 </div>
 
                 <button className="login-btn" onClick={handleRegister}>

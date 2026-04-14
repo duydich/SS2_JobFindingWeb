@@ -1,8 +1,11 @@
 import { useState } from "react";
-import "./Explore.css";
+import { useNavigate } from "react-router-dom";
+import "./explore.css";
 import { Search, MapPin, Heart, Briefcase, User, LogOut, Coffee, ShoppingBag, Monitor, Megaphone } from "lucide-react";
 
-const Explore = () => {
+function Explore() {
+
+  const navigate = useNavigate();
 
   const [jobtitle, setJobtitle] = useState("");
   const [location, setLocation] = useState("");
@@ -14,28 +17,28 @@ const Explore = () => {
       company: "The Coffee Club",
       salary: "$22/hr",
       distance: "300m away",
-      img: "https://source.unsplash.com/300x200/?coffee"
+      img: "https://picsum.photos/300/200?random=1"
     },
     {
       title: "Retail Assistant",
       company: "The Iconic",
       salary: "$25/hr",
       distance: "1.2km away",
-      img: "https://source.unsplash.com/300x200/?shop"
+      img: "https://picsum.photos/300/200?random=2"
     },
     {
       title: "Office Admin",
       company: "Tech Solutions",
       salary: "$28/hr",
       distance: "2.5km away",
-      img: "https://source.unsplash.com/300x200/?office"
+      img: "https://picsum.photos/300/200?random=3"
     },
     {
       title: "Marketing Intern",
       company: "Creative Agency",
       salary: "$20/hr",
       distance: "500m away",
-      img: "https://source.unsplash.com/300x200/?marketing"
+      img: "https://picsum.photos/300/200?random=4"
     }
   ];
 
@@ -44,17 +47,51 @@ const Explore = () => {
 
       {/* NAVBAR */}
       <div className="nav">
-        <h2 className="logo">JobFinder</h2>
 
-        <div className="search-bar">
-          <Search size={16} />
-          <input placeholder="Search for opportunities..." />
+        {/* LEFT */}
+        <div className="nav-left">
+          <h2 className="logo">JobFinder</h2>
         </div>
 
+        {/* CENTER */}
+        <div className="nav-center">
+          <div className="search-bar">
+            <Search size={16} />
+            <input placeholder="Search for opportunities..." />
+          </div>
+        </div>
+
+        {/* RIGHT */}
         <div className="nav-right">
-          <span>Saved Jobs</span>
-          <User />
-          <LogOut />
+
+          {/* SAVED JOB */}
+          <div
+            className="nav-item"
+            onClick={() => navigate("/saved")}
+          >
+            <Heart size={18} />
+            <span>Saved</span>
+          </div>
+
+          {/* PROFILE */}
+          <div
+            className="nav-item avatar"
+            onClick={() => navigate("/studentprofile")}
+          >
+            <img src="https://i.pravatar.cc/40" alt="" />
+          </div>
+
+          {/* LOGOUT */}
+          <div
+            className="nav-item"
+            onClick={() => {
+              localStorage.removeItem("userId");
+              navigate("/login");
+            }}
+          >
+            <LogOut size={18} />
+          </div>
+
         </div>
       </div>
 

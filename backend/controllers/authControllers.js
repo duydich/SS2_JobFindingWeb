@@ -5,7 +5,8 @@ const bcrypt = require("bcryptjs");
 // ================= REGISTER =================
 const register = async (req, res) => {
     try {
-        const { name, email, password, role } = req.body;
+        let { name, email, password, role } = req.body;
+
 
         // 1. Validate
         if (!name || !email || !password) {
@@ -131,4 +132,53 @@ const login = async (req, res) => {
 };
 
 
-module.exports = { register, login };
+// ================= GET USER =================
+const getProfile = async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id).select("-password");
+
+        if (!user) {
+            return res.json({
+                success: false,
+                message: "User not found"
+            });
+        }
+
+        return res.json({
+            success: true,
+            data: user
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+};
+
+
+// ================= UPDATE USER =================
+const updateUser = async (req, res) => {
+    try {
+        const user = await User.findByIdAndUpdate(
+            req.params.id,
+            req.body,
+            { new: true }
+        ).select("-password");
+
+        return res.json({
+            success: true,
+            data: user
+        });
+
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Server error"
+        });
+    }
+};
+
+
+module.exports = { register, login, getProfile, updateUser };

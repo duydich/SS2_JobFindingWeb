@@ -67,13 +67,28 @@ label {
     transition: all 0.2s ease;
 }
 
+/* ===== checkbox ===== */
+.checkbox-group {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.checkbox-group input {
+    width: auto;
+}
+.checkbox-group label {
+    margin: 0;
+    line-height: 1; 
+}
+
 /* icon */
 .input-group span {
     display: flex;
     align-items: center;
     justify-content: center;
     width: 40px;
-    background: #f0f0f0;
     color: #666;
 }
 
