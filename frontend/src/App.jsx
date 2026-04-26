@@ -8,6 +8,8 @@ import RecruiterDashboard from "./pages/recruiter/RecruiterDashboard";
 import RecruiterProfile from "./pages/recruiter/RecruiterProfile";
 import PostJob from "./pages/recruiter/PostJob";
 import SavedJobs from "./pages/savedjobs/SavedJobs";
+import JobPreview from "./pages/jobpreview/JobPreview";
+import SearchPage from "./pages/searchpage/SearchPage";
 
 function App() {
   return (
@@ -17,6 +19,8 @@ function App() {
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/explore" element={<Explore />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/job-preview/:id" element={<JobPreview />} />
         <Route path="/studentprofile" element={<StudentProfile />} />
         <Route path="/recruiter" element={<RecruiterDashboard />} />
         <Route path="/recruiterprofile" element={<RecruiterProfile />} />

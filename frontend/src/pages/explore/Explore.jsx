@@ -1,16 +1,35 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import "./explore.css";
-import { Search, MapPin, Heart, Briefcase, User, LogOut, Coffee, ShoppingBag, Monitor, Megaphone } from "lucide-react";
+import { Search, MapPin, Heart, Briefcase, LogOut, Coffee, ShoppingBag, Monitor, Megaphone, DollarSign, Tag, ChevronDown } from "lucide-react";
 
 function Explore() {
   const navigate = useNavigate();
   const [jobtitle, setJobtitle] = useState("");
   const [location, setLocation] = useState("");
+  const [salary, setSalary] = useState("");
+  const [salaryType, setSalaryType] = useState("month"); // month or hour
+  const [industry, setIndustry] = useState("");
+  const [customIndustry, setCustomIndustry] = useState("");
+  const [showIndustryOther, setShowIndustryOther] = useState(false);
+  
   const [jobs, setJobs] = useState([]);
   const [savedJobIds, setSavedJobIds] = useState([]);
   const [user, setUser] = useState(null);
   const [currentUserId, setCurrentUserId] = useState(localStorage.getItem("userId"));
+
+  const industries = [
+    "Information Technology",
+    "Food & Beverage",
+    "Retail & Sales",
+    "Marketing & Communication",
+    "Education & Training",
+    "Healthcare & Medical",
+    "Office & Administration",
+    "Construction & Engineering",
+    "Logistics & Transport",
+    "Other"
+  ];
 
   useEffect(() => {
     fetchJobs();
@@ -34,7 +53,26 @@ function Explore() {
     if (data.success) setJobs(data.data);
   };
 
+  const handleSearch = () => {
+    const finalIndustry = industry === "Other" ? customIndustry : industry;
+    const query = new URLSearchParams({
+      keyword: jobtitle,
+      location: location,
+      salary: salary,
+      salaryType: salaryType,
+      industry: finalIndustry
+    }).toString();
+    navigate(`/search?${query}`);
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
+
   const fetchSavedJobIds = async () => {
+// ... (rest of the code remains similar)
     try {
       const res = await fetch(`http://localhost:5000/api/saved-jobs/${currentUserId}`);
       const data = await res.json();
@@ -82,13 +120,6 @@ function Explore() {
           <h2 className="logo" onClick={() => navigate("/")} style={{cursor: "pointer"}}>JobFinder</h2>
         </div>
 
-        <div className="nav-center">
-          <div className="search-bar">
-            <Search size={16} />
-            <input placeholder="Search for opportunities..." />
-          </div>
-        </div>
-
         <div className="nav-right">
           {!currentUserId ? (
             <div className="auth-btns">
@@ -123,60 +154,99 @@ function Explore() {
         </div>
       </div>
 
-      {/* HERO */}
-      <div className="hero">
-        <h1>Explore <span>part-time</span> jobs near you</h1>
-        <p>Browse jobs tailored for students and freshers.</p>
-        <div className="search-box">
-          <div className="input">
-            <Briefcase size={16} />
-            <input type="text" placeholder="Job title..." value={jobtitle} onChange={(e) => setJobtitle(e.target.value)} />
-          </div>
-          <div className="input">
-            <MapPin size={16} />
-            <input type="text" placeholder="Location..." value={location} onChange={(e) => setLocation(e.target.value)} />
-          </div>
-          <button onClick={fetchJobs}>Search Jobs</button>
-        </div>
-      </div>
-
-      {/* JOB GRID */}
-      <div className="section">
-        <div className="section-header"><h2>Recommended jobs</h2></div>
-        <div className="job-grid">
-          {jobs.map((job) => (
-            <div className="job-card" key={job._id}>
-              <img src={job.img || "https://picsum.photos/300/200"} alt="" />
-              <div className="job-body">
-                <div className="job-top">
-                  <h4>{job.title}</h4>
-                  <div className="heart-icon-box" onClick={() => handleToggleSave(job._id)}>
-                    <Heart 
-                        size={20} 
-                        fill={isSaved(job._id) ? "#4f46e5" : "none"} 
-                        color={isSaved(job._id) ? "#4f46e5" : "#94a3b8"}
-                        style={{cursor: "pointer", transition: "0.2s"}}
-                    />
-                  </div>
-                </div>
-                <p>{job.company}</p>
-                <div className="job-info">
-                  <span>{job.address}</span>
-                  <span className="salary">{job.salary}</span>
-                </div>
+      <div className="explore-content">
+        {/* HERO */}
+        <div className="hero">
+          <h1>Explore <span>part-time</span> jobs near you</h1>
+          <p>Browse jobs tailored for students and freshers.</p>
+          <div className="search-box" onKeyDown={handleKeyDown}>
+            <div className="input-group">
+              <div className="input">
+                <Briefcase size={16} />
+                <input type="text" placeholder="Job title..." value={jobtitle} onChange={(e) => setJobtitle(e.target.value)} />
+              </div>
+              <div className="input">
+                <MapPin size={16} />
+                <input type="text" placeholder="Location..." value={location} onChange={(e) => setLocation(e.target.value)} />
               </div>
             </div>
-          ))}
-        </div>
-      </div>
 
-      <div className="section">
-        <h2>Browse by category</h2>
-        <div className="category-grid">
-          <div className="category big" onClick={() => {setJobtitle("Food"); fetchJobs();}}><Coffee /><p>Food & Beverage</p></div>
-          <div className="category small" onClick={() => {setJobtitle("Retail"); fetchJobs();}}><ShoppingBag /><p>Retail</p></div>
-          <div className="category small orange" onClick={() => {setJobtitle("Office"); fetchJobs();}}><Monitor /><p>Office</p></div>
-          <div className="category small purple" onClick={() => {setJobtitle("Marketing"); fetchJobs();}}><Megaphone /><p>Marketing</p></div>
+            <div className="input-group">
+              <div className="input salary-input">
+                <DollarSign size={16} />
+                <input type="number" placeholder="Min salary..." value={salary} onChange={(e) => setSalary(e.target.value)} />
+                <select value={salaryType} onChange={(e) => setSalaryType(e.target.value)}>
+                  <option value="month">/mo</option>
+                  <option value="hour">/hr</option>
+                </select>
+              </div>
+              
+              <div className="input industry-input">
+                <Tag size={16} />
+                {industry === "Other" ? (
+                  <input 
+                    type="text" 
+                    placeholder="Enter industry..." 
+                    value={customIndustry} 
+                    onChange={(e) => setCustomIndustry(e.target.value)}
+                    onBlur={() => { if(!customIndustry) setIndustry(""); }}
+                    autoFocus
+                  />
+                ) : (
+                  <select value={industry} onChange={(e) => setIndustry(e.target.value)}>
+                    <option value="">All Industries</option>
+                    {industries.map(ind => <option key={ind} value={ind}>{ind}</option>)}
+                  </select>
+                )}
+              </div>
+            </div>
+            
+            <button className="search-btn" onClick={handleSearch}>Search Jobs</button>
+          </div>
+        </div>
+
+        {/* JOB GRID */}
+        <div className="section">
+          <div className="section-header"><h2>Recommended jobs</h2></div>
+          <div className="job-grid">
+            {jobs.map((job) => (
+              <div className="job-card" key={job._id} onClick={() => navigate(`/job-preview/${job._id}`)}>
+                <img src={job.img || "https://picsum.photos/300/200"} alt="" />
+                <div className="job-body">
+                  <div className="job-top">
+                    <h4>{job.title}</h4>
+                    <div className="heart-icon-box" onClick={(e) => { e.stopPropagation(); handleToggleSave(job._id); }}>
+                      <Heart 
+                          size={20} 
+                          fill={isSaved(job._id) ? "#4f46e5" : "none"} 
+                          color={isSaved(job._id) ? "#4f46e5" : "#94a3b8"}
+                          style={{cursor: "pointer", transition: "0.2s"}}
+                      />
+                    </div>
+                  </div>
+                  <p>{job.company}</p>
+                  <div className="job-tags">
+                    <span className="tag-industry">{job.industry}</span>
+                    <span className="tag-type">{job.jobType}</span>
+                  </div>
+                  <div className="job-info">
+                    <span>{job.address}</span>
+                    <span className="salary">{job.salary}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div className="section">
+          <h2>Browse by category</h2>
+          <div className="category-grid">
+            <div className="category big" onClick={() => {setJobtitle("Food"); fetchJobs();}}><Coffee /><p>Food & Beverage</p></div>
+            <div className="category small" onClick={() => {setJobtitle("Retail"); fetchJobs();}}><ShoppingBag /><p>Retail</p></div>
+            <div className="category small orange" onClick={() => {setJobtitle("Office"); fetchJobs();}}><Monitor /><p>Office</p></div>
+            <div className="category small purple" onClick={() => {setJobtitle("Marketing"); fetchJobs();}}><Megaphone /><p>Marketing</p></div>
+          </div>
         </div>
       </div>
 

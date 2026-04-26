@@ -1,0 +1,70 @@
+.back-link-main {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: none;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+  font-weight: 600;
+  padding: 10px 0;
+  margin-bottom: 20px;
+  transition: all 0.2s;
+  width: fit-content;
+}
+
+.back-link-main:hover {
+  color: #4f46e5;
+  transform: translateX(-5px);
+}
+
+.search-header-area {
+  background: white;
+  padding: 30px;
+  border-radius: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  margin-bottom: 40px;
+}
+
+.search-page-title {
+  font-size: 28px;
+  font-weight: 800;
+  color: #1e293b;
+  margin-bottom: 24px;
+}
+
+.loading-results {
+  text-align: center;
+  padding: 60px;
+  color: #64748b;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.no-results-box {
+  text-align: center;
+  padding: 100px 0;
+  color: #94a3b8;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.no-results-box p {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* Ghi đè search-box để nó full width trong area */
+.search-header-area .search-box {
+  max-width: 100% !important;
+  box-shadow: none;
+  padding: 0;
+}
+
+@media (max-width: 640px) {
+  .search-header-area {
+    padding: 20px;
+  }
+}

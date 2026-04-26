@@ -108,6 +108,29 @@
     padding-top: 10px;
 }
 
+.job-tags {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.job-tags span {
+    padding: 4px 10px;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    font-weight: 700;
+}
+
+.tag-industry {
+    background: #eef2ff;
+    color: #4f46e5;
+}
+
+.tag-type {
+    background: #f1f5f9;
+    color: #475569;
+}
+
 .salary {
     color: #4f46e5;
     font-weight: 700;

@@ -77,12 +77,12 @@ function SavedJobs() {
                 ) : (
                     <div className="job-grid"> {/* Dùng chung class job-grid từ explore */}
                         {jobs.map((job) => (
-                            <div className="job-card" key={job._id}>
+                            <div className="job-card" key={job._id} onClick={() => navigate(`/job-preview/${job._id}`)}>
                                 <img src={job.img || "https://picsum.photos/300/200"} alt="" />
                                 <div className="job-body">
                                     <div className="job-top">
                                         <h4>{job.title}</h4>
-                                        <div className="heart-icon-box" onClick={() => handleToggleSave(job._id)}>
+                                        <div className="heart-icon-box" onClick={(e) => { e.stopPropagation(); handleToggleSave(job._id); }}>
                                             <Heart 
                                                 size={20} 
                                                 fill={isJobUnsaved(job._id) ? "none" : "#4f46e5"} 
@@ -92,6 +92,10 @@ function SavedJobs() {
                                         </div>
                                     </div>
                                     <p>{job.company}</p>
+                                    <div className="job-tags">
+                                        <span className="tag-industry">{job.industry}</span>
+                                        <span className="tag-type">{job.jobType}</span>
+                                    </div>
                                     <div className="job-info">
                                         <span>{job.address}</span>
                                         <span className="salary">{job.salary}</span>
