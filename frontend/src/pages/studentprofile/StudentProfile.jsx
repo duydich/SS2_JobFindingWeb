@@ -1,8 +1,12 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { ArrowLeft } from "lucide-react";
 import "./studentprofile.css";
 
 function StudentProfile() {
     const [user, setUser] = useState(null);
+    const fileInputRef = useRef(null);
+    const navigate = useNavigate();
 
     // LOAD USER TỪ BACKEND
     useEffect(() => {
@@ -45,9 +49,24 @@ function StudentProfile() {
         }));
     };
 
+    // HANDLE AVATAR CHANGE
+    const handleFileChange = (e) => {
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                handleChange("avatar", reader.result);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     // SAVE PROFILE
     const handleSave = async () => {
         const userId = localStorage.getItem("userId");
+
+        // Clone user object and remove system fields
+        const { _id, __v, createdAt, ...updateData } = user;
 
         try {
             const res = await fetch(
@@ -57,7 +76,7 @@ function StudentProfile() {
                     headers: {
                         "Content-Type": "application/json"
                     },
-                    body: JSON.stringify(user)
+                    body: JSON.stringify(updateData)
                 }
             );
 
@@ -82,10 +101,12 @@ function StudentProfile() {
 
             {/* HEADER */}
             <div className="profile-header">
-                <h2>Edit Profile</h2>
-                <button className="save-btn" onClick={handleSave}>
-                    Save Changes
-                </button>
+                <div className="header-left">
+                    <button className="back-btn" onClick={() => navigate("/explore")}>
+                        <ArrowLeft size={20} />
+                    </button>
+                    <h2>Edit Profile</h2>
+                </div>
             </div>
 
             <div className="profile-grid">
@@ -97,12 +118,24 @@ function StudentProfile() {
                     <div className="card">
                         <h4>Profile Identity</h4>
 
-                        <div className="avatar-box">
+                        <div 
+                            className="avatar-box" 
+                            onClick={() => fileInputRef.current.click()}
+                            style={{ cursor: "pointer" }}
+                        >
                             <img
                                 src={user.avatar || "https://i.pravatar.cc/150"}
-                                alt=""
+                                alt="Avatar"
                             />
+                            <div className="avatar-overlay">Change</div>
                         </div>
+                        <input 
+                            type="file" 
+                            ref={fileInputRef} 
+                            style={{ display: "none" }} 
+                            accept="image/*"
+                            onChange={handleFileChange}
+                        />
 
                         <p className="hint">
                             Recommended: Square JPG or PNG, 400x400px.
@@ -141,27 +174,13 @@ function StudentProfile() {
                     <div className="card">
                         <h4>Student Bio</h4>
 
-                        <div className="row">
-                            <div>
-                                <label>Full Name</label>
-                                <input
-                                    value={user.name || ""}
-                                    onChange={(e) =>
-                                        handleChange("name", e.target.value)
-                                    }
-                                />
-                            </div>
-
-                            <div>
-                                <label>Title</label>
-                                <input
-                                    value={user.title || ""}
-                                    onChange={(e) =>
-                                        handleChange("title", e.target.value)
-                                    }
-                                />
-                            </div>
-                        </div>
+                        <label>Full Name</label>
+                        <input
+                            value={user.name || ""}
+                            onChange={(e) =>
+                                handleChange("name", e.target.value)
+                            }
+                        />
 
                         <label>Bio</label>
                         <textarea
@@ -198,7 +217,7 @@ function StudentProfile() {
 
             {/* FOOTER */}
             <div className="profile-footer">
-                <button className="discard">Discard Changes</button>
+                <button className="discard" onClick={() => window.location.reload()}>Discard Changes</button>
                 <button className="save-btn" onClick={handleSave}>
                     Save Changes
                 </button>

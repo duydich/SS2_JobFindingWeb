@@ -173,9 +173,11 @@ const updateUser = async (req, res) => {
         });
 
     } catch (error) {
+        console.error("Update User Error:", error);
         return res.status(500).json({
             success: false,
-            message: "Server error"
+            message: "Server error",
+            error: error.message
         });
     }
 };

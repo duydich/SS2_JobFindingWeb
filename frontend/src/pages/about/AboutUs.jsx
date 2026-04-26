@@ -4,6 +4,15 @@ import "./aboutus.css";
 import { MapPin, Filter, Bookmark, Briefcase } from "lucide-react";
 
 const AboutUs = () => {
+  const userId = localStorage.getItem("userId");
+  const role = localStorage.getItem("role");
+
+  // Determine the target path based on login status and role
+  const getTargetPath = () => {
+    if (!userId) return "/login";
+    return role === "recruiter" ? "/recruiter" : "/explore";
+  };
+
   return (
     <div className="about-container">
 
@@ -11,7 +20,9 @@ const AboutUs = () => {
       <nav className="navbar">
         <div className="container nav-inner">
           <div className="nav-logo">JobFinder</div>
-          <Link to="/login" className="nav-btn">Sign in</Link>
+          <Link to={getTargetPath()} className="nav-btn">
+            {userId ? (role === "recruiter" ? "Go to Dashboard" : "Explore Jobs") : "Sign in"}
+          </Link>
         </div>
       </nav>
 
@@ -29,8 +40,8 @@ const AboutUs = () => {
               Join thousands of users finding their first career steps.
             </p>
 
-            <Link to="/login" className="link-btn">
-              Sign in →
+            <Link to={getTargetPath()} className="link-btn">
+              {userId ? "Start Working →" : "Sign in →"}
             </Link>
           </div>
 

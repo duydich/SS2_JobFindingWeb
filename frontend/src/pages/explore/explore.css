@@ -64,8 +64,59 @@ html, body {
 .nav-right {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 20px;
 }
+
+.auth-btns {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.login-btn {
+  background: transparent;
+  border: 1.5px solid #4f46e5;
+  color: #4f46e5;
+  padding: 8px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: 40px; /* Cố định chiều cao để cân bằng */
+}
+
+.login-btn:hover {
+  background: #f5f3ff;
+}
+
+.join-btn {
+  background: #4f46e5;
+  border: 1.5px solid #4f46e5; /* Thêm border cùng độ dày để cân bằng với nút Login */
+  color: white;
+  padding: 8px 24px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  height: 40px; /* Cố định chiều cao để cân bằng */
+}
+
+.join-btn:hover {
+  background: #4338ca;
+}
+
+.login-btn {
+  margin-top: 0;
+}
+
 
 .nav-item {
   display: flex;

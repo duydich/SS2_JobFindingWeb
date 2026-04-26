@@ -9,34 +9,35 @@ function Login() {
     const [password, setPassword] = useState("");
     const navigate = useNavigate();
 
-    const handleLogin = async () => {
-        const res = await fetch("http://localhost:5000/api/login", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ email, password })
-        });
+    const handleLogin = async (e) => {
+        e.preventDefault();
 
-        const data = await res.json();
+        try {
+            const res = await fetch("http://localhost:5000/api/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ email, password }),
+            });
 
-        if (data.success) {
-            alert("Đăng nhập thành công");
-            // lấy user object
-            const user = data.data;
+            const data = await res.json();
 
-            // Lấy role từ object user
-            const role = user.role;  // Thêm dòng này
-
-            // chỉ lưu ID
-            localStorage.setItem("userId", user._id);
-
-            // redirect theo role
-            if (role === "recruiter") {
-                navigate("/recruiter");
+            if (data.success) {
+                localStorage.setItem("userId", data.data._id);
+                localStorage.setItem("role", data.data.role);
+                
+                if (data.data.role === "recruiter") {
+                    navigate("/recruiter");
+                } else {
+                    navigate("/explore");
+                }
             } else {
-                navigate("/explore"); // default = student
+                alert(data.message);
             }
-        } else {
-            alert(data.message);
+        } catch (err) {
+            console.error("Login error:", err);
+            alert("An error occurred during login.");
         }
     };
 
@@ -50,42 +51,46 @@ function Login() {
                     <span>JobFinder</span>
                 </div>
 
-                <h2>Welcome to JobFinder</h2>
+                <h2>Welcome Back</h2>
                 <p className="subtitle">
-                    Sign in to continue finding part-time jobs
+                    Login to manage your jobs or find opportunities
                 </p>
 
-                {/* EMAIL */}
-                <label>EMAIL</label>
-                <div className="input-group">
-                    <span><Mail size={16} /></span>
-                    <input
-                        type="text"
-                        placeholder="Email"
-                        value={email}
-                        onChange={(e) => setEmail(e.target.value)}
-                    />
-                </div>
+                <form onSubmit={handleLogin}>
+                    {/* EMAIL */}
+                    <label>EMAIL ADDRESS</label>
+                    <div className="input-group">
+                        <span><Mail size={16} /></span>
+                        <input
+                            type="email"
+                            placeholder="Email address"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
+                            required
+                        />
+                    </div>
 
-                {/* PASSWORD */}
-                <label>PASSWORD</label>
-                <div className="input-group">
-                    <span><Lock size={16} /></span>
-                    <input
-                        type="password"
-                        placeholder="Password"
-                        value={password}
-                        onChange={(e) => setPassword(e.target.value)}
-                    />
-                </div>
+                    {/* PASSWORD */}
+                    <label>PASSWORD</label>
+                    <div className="input-group">
+                        <span><Lock size={16} /></span>
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            required
+                        />
+                    </div>
 
-                <div className="forgot">Forgot password?</div>
+                    <p className="forgot">Forgot password?</p>
 
-                <button className="login-btn" onClick={handleLogin}>
-                    Login
-                </button>
+                    <button type="submit" className="login-btn">
+                        Login
+                    </button>
+                </form>
 
-                <p className="or">Or login with</p>
+                <p className="or">Or continue with</p>
 
                 <button className="google-btn">
                     Continue with Google
