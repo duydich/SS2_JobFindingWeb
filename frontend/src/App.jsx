@@ -10,6 +10,8 @@ import PostJob from "./pages/recruiter/PostJob";
 import SavedJobs from "./pages/savedjobs/SavedJobs";
 import JobPreview from "./pages/jobpreview/JobPreview";
 import SearchPage from "./pages/searchpage/SearchPage";
+import RecruitmentHistory from "./pages/recruitmenthistory/RecruitmentHistory";
+import EmploymentHistory from "./pages/employmenthistory/EmploymentHistory";
 
 function App() {
   return (
@@ -27,6 +29,8 @@ function App() {
         <Route path="/post-job" element={<PostJob />} />
         <Route path="/edit-job/:id" element={<PostJob />} />
         <Route path="/saved" element={<SavedJobs />} />
+        <Route path="/recruitment-history" element={<RecruitmentHistory />} />
+        <Route path="/employment-history" element={<EmploymentHistory />} />
       </Routes>
     </BrowserRouter>
   );

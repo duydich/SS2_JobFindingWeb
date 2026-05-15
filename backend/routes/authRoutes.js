@@ -1,15 +1,18 @@
 const express = require("express");
 const router = express.Router();
 
-const { login } = require("../controllers/authControllers");
-const { register } = require("../controllers/authControllers");
-const { getProfile } = require("../controllers/authControllers");
-const { updateUser } = require("../controllers/authControllers");
-
+const {
+    login,
+    register,
+    googleAuth,
+    getProfile,
+    updateUser
+} = require("../controllers/authControllers");
 
 // API login
 router.post("/register", register);
 router.post("/login", login);
+router.post("/google-auth", googleAuth);
 
 // API info
 router.get("/profile/:id", getProfile);

@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { User, Mail, Lock, Briefcase } from "lucide-react";
 import "./login.css"; // Dùng chung file css viết thường
+import { loginWithGoogle } from "../../services/authService";
 
 function Register() {
     const [name, setName] = useState("");
@@ -30,6 +31,27 @@ function Register() {
 
         } catch (error) {
             alert("Lỗi kết nối server");
+        }
+    };
+
+    const handleGoogleRegister = async () => {
+        try {
+            const role = isRecruiter ? "recruiter" : "student";
+
+            const user = await loginWithGoogle(role);
+
+            localStorage.setItem("userId", user._id);
+            localStorage.setItem("role", user.role);
+
+            if (user.role === "recruiter") {
+                navigate("/recruiter");
+            } else {
+                navigate("/explore");
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Google register failed");
         }
     };
 
@@ -101,8 +123,16 @@ function Register() {
 
                 <p className="or">Or continue with</p>
 
-                <button className="google-btn">
-                    <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" alt="G" width="18" />
+                <button
+                    className="google-btn"
+                    onClick={handleGoogleRegister}
+                >
+                    <img
+                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                        alt="G"
+                        width="18"
+                    />
+
                     Google
                 </button>
 

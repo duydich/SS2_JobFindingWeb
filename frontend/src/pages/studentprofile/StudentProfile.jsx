@@ -1,27 +1,32 @@
 import { useEffect, useState, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { ArrowLeft } from "lucide-react";
 import "./studentprofile.css";
 
 function StudentProfile() {
     const [user, setUser] = useState(null);
+    const [searchParams] = useSearchParams();
     const fileInputRef = useRef(null);
     const navigate = useNavigate();
+    
+    // Check if we are viewing someone else's profile
+    const profileId = searchParams.get("id");
+    const currentUserId = localStorage.getItem("userId");
+    const isOwnProfile = !profileId || profileId === currentUserId;
+    const targetId = profileId || currentUserId;
 
     // LOAD USER TỪ BACKEND
     useEffect(() => {
         const fetchUser = async () => {
-            const userId = localStorage.getItem("userId");
-
-            if (!userId) {
-                console.log("No userId found");
+            if (!targetId) {
+                console.log("No targetId found");
                 return;
             }
 
             try {
-                const res = await fetch(`http://localhost:5000/api/profile/${userId}`,
+                const res = await fetch(`http://localhost:5000/api/profile/${targetId}`,
                     {
-                        method: "GET", // Khai báo rõ ràng đây là hành động Lấy dữ liệu về
+                        method: "GET",
                         headers: {"Content-Type": "application/json"}
                     }
                 );
@@ -39,10 +44,11 @@ function StudentProfile() {
         };
 
         fetchUser();
-    }, []);
+    }, [targetId]);
 
     // HANDLE INPUT CHANGE
     const handleChange = (field, value) => {
+        if (!isOwnProfile) return;
         setUser((prev) => ({
             ...prev,
             [field]: value
@@ -51,6 +57,7 @@ function StudentProfile() {
 
     // HANDLE AVATAR CHANGE
     const handleFileChange = (e) => {
+        if (!isOwnProfile) return;
         const file = e.target.files[0];
         if (file) {
             const reader = new FileReader();
@@ -63,14 +70,14 @@ function StudentProfile() {
 
     // SAVE PROFILE
     const handleSave = async () => {
-        const userId = localStorage.getItem("userId");
-
+        if (!isOwnProfile) return;
+        
         // Clone user object and remove system fields
         const { _id, __v, createdAt, ...updateData } = user;
 
         try {
             const res = await fetch(
-                `http://localhost:5000/api/update/${userId}`,
+                `http://localhost:5000/api/update/${currentUserId}`,
                 {
                     method: "PUT",
                     headers: {
@@ -102,10 +109,10 @@ function StudentProfile() {
             {/* HEADER */}
             <div className="profile-header">
                 <div className="header-left">
-                    <button className="back-btn" onClick={() => navigate("/explore")}>
+                    <button className="back-btn" onClick={() => navigate(-1)}>
                         <ArrowLeft size={20} />
                     </button>
-                    <h2>Edit Profile</h2>
+                    <h2>{isOwnProfile ? "Edit Profile" : `${user.name}'s Profile`}</h2>
                 </div>
             </div>
 
@@ -120,26 +127,30 @@ function StudentProfile() {
 
                         <div 
                             className="avatar-box" 
-                            onClick={() => fileInputRef.current.click()}
-                            style={{ cursor: "pointer" }}
+                            onClick={() => isOwnProfile && fileInputRef.current.click()}
+                            style={{ cursor: isOwnProfile ? "pointer" : "default" }}
                         >
                             <img
                                 src={user.avatar || "https://i.pravatar.cc/150"}
                                 alt="Avatar"
                             />
-                            <div className="avatar-overlay">Change</div>
+                            {isOwnProfile && <div className="avatar-overlay">Change</div>}
                         </div>
-                        <input 
-                            type="file" 
-                            ref={fileInputRef} 
-                            style={{ display: "none" }} 
-                            accept="image/*"
-                            onChange={handleFileChange}
-                        />
+                        {isOwnProfile && (
+                            <input 
+                                type="file" 
+                                ref={fileInputRef} 
+                                style={{ display: "none" }} 
+                                accept="image/*"
+                                onChange={handleFileChange}
+                            />
+                        )}
 
-                        <p className="hint">
-                            Recommended: Square JPG or PNG, 400x400px.
-                        </p>
+                        {isOwnProfile && (
+                            <p className="hint">
+                                Recommended: Square JPG or PNG, 400x400px.
+                            </p>
+                        )}
                     </div>
 
                     {/* CONTACT */}
@@ -149,18 +160,21 @@ function StudentProfile() {
                         <label>Phone</label>
                         <input
                             value={user.phone || ""}
+                            readOnly={!isOwnProfile}
                             onChange={(e) => handleChange("phone", e.target.value)}
                         />
 
                         <label>Email</label>
                         <input
                             value={user.email || ""}
+                            readOnly={!isOwnProfile}
                             onChange={(e) => handleChange("email", e.target.value)}
                         />
 
                         <label>Location</label>
                         <input
                             value={user.location || ""}
+                            readOnly={!isOwnProfile}
                             onChange={(e) => handleChange("location", e.target.value)}
                         />
                     </div>
@@ -177,6 +191,7 @@ function StudentProfile() {
                         <label>Full Name</label>
                         <input
                             value={user.name || ""}
+                            readOnly={!isOwnProfile}
                             onChange={(e) =>
                                 handleChange("name", e.target.value)
                             }
@@ -185,6 +200,7 @@ function StudentProfile() {
                         <label>Bio</label>
                         <textarea
                             value={user.bio || ""}
+                            readOnly={!isOwnProfile}
                             onChange={(e) =>
                                 handleChange("bio", e.target.value)
                             }
@@ -198,6 +214,7 @@ function StudentProfile() {
                         <label>School / Company</label>
                         <input
                             value={user.company || ""}
+                            readOnly={!isOwnProfile}
                             onChange={(e) =>
                                 handleChange("company", e.target.value)
                             }
@@ -206,6 +223,7 @@ function StudentProfile() {
                         <label>Website</label>
                         <input
                             value={user.website || ""}
+                            readOnly={!isOwnProfile}
                             onChange={(e) =>
                                 handleChange("website", e.target.value)
                             }
@@ -216,12 +234,14 @@ function StudentProfile() {
             </div>
 
             {/* FOOTER */}
-            <div className="profile-footer">
-                <button className="discard" onClick={() => window.location.reload()}>Discard Changes</button>
-                <button className="save-btn" onClick={handleSave}>
-                    Save Changes
-                </button>
-            </div>
+            {isOwnProfile && (
+                <div className="profile-footer">
+                    <button className="discard" onClick={() => window.location.reload()}>Discard Changes</button>
+                    <button className="save-btn" onClick={handleSave}>
+                        Save Changes
+                    </button>
+                </div>
+            )}
 
         </div>
     );

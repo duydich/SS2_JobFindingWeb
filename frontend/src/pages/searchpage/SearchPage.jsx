@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import { Search, MapPin, Heart, Briefcase, LogOut, DollarSign, Tag, ArrowLeft, Coffee, ShoppingBag, Monitor, Megaphone } from "lucide-react";
+import { Search, MapPin, Heart, Briefcase, LogOut, DollarSign, Tag, ArrowLeft, Coffee, ShoppingBag, Monitor, Megaphone, Clock } from "lucide-react";
 import "./searchpage.css";
-import "../explore/explore.css"; // Sử dụng chung CSS của explore
+import "../explore/explore.css"; 
+import JobCard from "../../components/JobCard";
 
 function SearchPage() {
   const [searchParams] = useSearchParams();
@@ -59,7 +60,6 @@ function SearchPage() {
       const salaryParam = searchParams.get("salary") || "";
       const locationParam = searchParams.get("location") || "";
       
-      // Lấy danh sách công việc (có thể kèm keyword từ server)
       let url = `http://localhost:5000/api/jobs?keyword=${keyword}`;
       const res = await fetch(url);
       const data = await res.json();
@@ -67,28 +67,24 @@ function SearchPage() {
       if (data.success) {
         let filteredJobs = data.data;
         
-        // 1. Lọc theo Industry (Chính xác)
         if (industryParam) {
           filteredJobs = filteredJobs.filter(j => 
             j.industry && j.industry.trim().toLowerCase() === industryParam.trim().toLowerCase()
           );
         }
 
-        // 2. Lọc theo Location (Chứa chuỗi)
         if (locationParam) {
           filteredJobs = filteredJobs.filter(j => 
             j.address && j.address.toLowerCase().includes(locationParam.toLowerCase())
           );
         }
 
-        // 3. Lọc lương thông minh (Lọc theo mức tối thiểu)
         if (salaryParam) {
           const type = searchParams.get("salaryType");
           const searchNum = parseInt(salaryParam.replace(/[^0-9]/g, ""), 10);
 
           filteredJobs = filteredJobs.filter(j => {
             const jobSalaryStr = j.salary.toLowerCase();
-            // Lấy con số thực tế từ chuỗi lương của job (ví dụ "50.000 VNĐ/giờ" -> 50000)
             const jobNum = parseInt(j.salary.replace(/[^0-9]/g, ""), 10);
             
             if (isNaN(jobNum)) return false;
@@ -177,6 +173,11 @@ function SearchPage() {
             </div>
           ) : (
             <>
+              <div className="nav-item" onClick={() => navigate("/employment-history")}>
+                <Clock size={18} />
+                <span>History</span>
+              </div>
+
               <div className="nav-item" onClick={() => navigate("/saved")}>
                 <Heart 
                   size={18} 
@@ -277,31 +278,13 @@ function SearchPage() {
           ) : (
             <div className="job-grid">
               {jobs.map((job) => (
-                <div className="job-card" key={job._id} onClick={() => navigate(`/job-preview/${job._id}`)}>
-                  <img src={job.img || "https://picsum.photos/300/200"} alt="" />
-                  <div className="job-body">
-                    <div className="job-top">
-                      <h4>{job.title}</h4>
-                      <div className="heart-icon-box" onClick={(e) => { e.stopPropagation(); handleToggleSave(job._id); }}>
-                        <Heart 
-                            size={20} 
-                            fill={isSaved(job._id) ? "#4f46e5" : "none"} 
-                            color={isSaved(job._id) ? "#4f46e5" : "#94a3b8"}
-                            style={{cursor: "pointer", transition: "0.2s"}}
-                        />
-                      </div>
-                    </div>
-                    <p>{job.company}</p>
-                    <div className="job-tags">
-                      <span className="tag-industry">{job.industry}</span>
-                      <span className="tag-type">{job.jobType}</span>
-                    </div>
-                    <div className="job-info">
-                      <span>{job.address}</span>
-                      <span className="salary">{job.salary}</span>
-                    </div>
-                  </div>
-                </div>
+                <JobCard 
+                    key={job._id}
+                    job={job}
+                    onClick={() => navigate(`/job-preview/${job._id}`)}
+                    onToggleSave={handleToggleSave}
+                    isSaved={isSaved(job._id)}
+                />
               ))}
             </div>
           )}

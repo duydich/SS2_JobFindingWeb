@@ -50,6 +50,14 @@ function RecruiterDashboard() {
                     <h2 className="logo">JobFinder <span>Recruiter</span></h2>
                 </div>
                 <div className="nav-right">
+                    <div className="nav-item" onClick={() => navigate("/post-job")}>
+                        <Plus size={18} />
+                        <span>Post Job</span>
+                    </div>
+                    <div className="nav-item" onClick={() => navigate("/recruitment-history")}>
+                        <Briefcase size={18} />
+                        <span>History</span>
+                    </div>
                     <div
                         className="nav-item avatar"
                         onClick={() => navigate("/recruiterprofile")}

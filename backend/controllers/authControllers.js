@@ -131,7 +131,60 @@ const login = async (req, res) => {
     }
 };
 
+//----------------------GG login-------------------------
+const googleAuth = async (req, res) => {
+    try {
+        let {
+            name,
+            email,
+            avatar,
+            role
+        } = req.body;
 
+        // Clean data
+        email = email.trim().toLowerCase();
+
+        // Check user tồn tại chưa
+        let user = await User.findOne({ email });
+
+        // Nếu chưa có user -> tạo mới
+        if (!user) {
+            user = await User.create({
+                name,
+                email,
+                password: null,
+                role: role || "student",
+                avatar,
+                provider: "google",
+            });
+
+            console.log("Google user created:", user.email);
+        } else {
+            console.log("Google login:", user.email);
+        }
+
+        // Response
+        return res.status(200).json({
+            success: true,
+            message: "Google authentication successful",
+            data: {
+                _id: user._id,
+                name: user.name,
+                email: user.email,
+                role: user.role,
+                avatar: user.avatar,
+            },
+        });
+
+    } catch (error) {
+        console.error("Google auth error:", error);
+
+        return res.status(500).json({
+            success: false,
+            message: "Google authentication failed",
+        });
+    }
+};
 // ================= GET USER =================
 const getProfile = async (req, res) => {
     try {
@@ -183,4 +236,4 @@ const updateUser = async (req, res) => {
 };
 
 
-module.exports = { register, login, getProfile, updateUser };
+module.exports = { register, login, googleAuth, getProfile, updateUser };

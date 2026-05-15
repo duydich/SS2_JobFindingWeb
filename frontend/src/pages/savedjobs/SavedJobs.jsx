@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Heart, ArrowLeft } from "lucide-react";
 import "./savedjobs.css";
+import JobCard from "../../components/JobCard";
 
 function SavedJobs() {
     const [jobs, setJobs] = useState([]);
@@ -75,33 +76,15 @@ function SavedJobs() {
                         <button className="browse-btn" onClick={() => navigate("/explore")}>Browse Jobs</button>
                     </div>
                 ) : (
-                    <div className="job-grid"> {/* Dùng chung class job-grid từ explore */}
+                    <div className="job-grid">
                         {jobs.map((job) => (
-                            <div className="job-card" key={job._id} onClick={() => navigate(`/job-preview/${job._id}`)}>
-                                <img src={job.img || "https://picsum.photos/300/200"} alt="" />
-                                <div className="job-body">
-                                    <div className="job-top">
-                                        <h4>{job.title}</h4>
-                                        <div className="heart-icon-box" onClick={(e) => { e.stopPropagation(); handleToggleSave(job._id); }}>
-                                            <Heart 
-                                                size={20} 
-                                                fill={isJobUnsaved(job._id) ? "none" : "#4f46e5"} 
-                                                color={isJobUnsaved(job._id) ? "#94a3b8" : "#4f46e5"}
-                                                style={{cursor: "pointer", transition: "0.2s"}}
-                                            />
-                                        </div>
-                                    </div>
-                                    <p>{job.company}</p>
-                                    <div className="job-tags">
-                                        <span className="tag-industry">{job.industry}</span>
-                                        <span className="tag-type">{job.jobType}</span>
-                                    </div>
-                                    <div className="job-info">
-                                        <span>{job.address}</span>
-                                        <span className="salary">{job.salary}</span>
-                                    </div>
-                                </div>
-                            </div>
+                            <JobCard 
+                                key={job._id}
+                                job={job}
+                                onClick={() => navigate(`/job-preview/${job._id}`)}
+                                onToggleSave={handleToggleSave}
+                                isSaved={!isJobUnsaved(job._id)}
+                            />
                         ))}
                     </div>
                 )}

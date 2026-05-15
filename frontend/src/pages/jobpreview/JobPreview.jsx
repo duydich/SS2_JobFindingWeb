@@ -9,12 +9,15 @@ function JobPreview() {
     const [job, setJob] = useState(null);
     const [loading, setLoading] = useState(true);
     const [isSaved, setIsSaved] = useState(false);
+    const [application, setApplication] = useState(null);
     const currentUserId = localStorage.getItem("userId");
+    const userRole = localStorage.getItem("role");
 
     useEffect(() => {
         fetchJobDetails();
         if (currentUserId) {
             checkIfSaved();
+            checkIfApplied();
         }
     }, [id, currentUserId]);
 
@@ -48,6 +51,50 @@ function JobPreview() {
         }
     };
 
+    const checkIfApplied = async () => {
+        try {
+            const res = await fetch(`http://localhost:5000/api/applications/student/${currentUserId}`);
+            const data = await res.json();
+            if (data.success) {
+                const userApp = data.data.find(app => app.job?._id === id);
+                setApplication(userApp);
+            }
+        } catch (err) {
+            console.error("Check applied error:", err);
+        }
+    };
+
+    const handleApply = async () => {
+        if (!currentUserId) {
+            alert("Please login to apply!");
+            navigate("/login");
+            return;
+        }
+
+        if (userRole === "recruiter") {
+            alert("Recruiters cannot apply for jobs!");
+            return;
+        }
+
+        try {
+            const res = await fetch("http://localhost:5000/api/applications/apply", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ studentId: currentUserId, jobId: id })
+            });
+            const data = await res.json();
+            if (data.success) {
+                alert("Application sent successfully!");
+                setApplication(data.data);
+            } else {
+                alert(data.message || "Failed to apply");
+            }
+        } catch (err) {
+            console.error("Apply error:", err);
+            alert("An error occurred. Please try again.");
+        }
+    };
+
     const handleToggleSave = async () => {
         if (!currentUserId) {
             alert("Please login to save jobs!");
@@ -76,7 +123,6 @@ function JobPreview() {
     return (
         <div className="job-preview-page">
             <div className="preview-wrapper">
-                {/* Nút Back nằm tách biệt hoàn toàn bên ngoài container */}
                 <button className="back-btn-side" onClick={() => navigate(-1)}>
                     <ArrowLeft size={24} />
                     <span>Back</span>
@@ -165,9 +211,17 @@ function JobPreview() {
                                     </div>
                                 </section>
 
-                                <button className="apply-btn" onClick={() => alert("Apply feature coming soon!")}>
-                                    Apply for this job
-                                </button>
+                                {userRole !== "recruiter" && (
+                                    <button 
+                                        className={`apply-btn status-${application?.status || 'none'}`} 
+                                        onClick={handleApply}
+                                        disabled={!!application}
+                                    >
+                                        {!application ? "Apply for this job" : 
+                                         application.status === 'pending' ? "Applied" :
+                                         application.status === 'accepted' ? "Accepted" : "Rejected"}
+                                    </button>
+                                )}
                             </div>
                         </div>
                     </main>

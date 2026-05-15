@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { Mail, Lock, Briefcase } from "lucide-react";
 import "./login.css";
+import { loginWithGoogle } from "../../services/authService";
 
 function Login() {
     const [email, setEmail] = useState("");
@@ -26,7 +27,7 @@ function Login() {
             if (data.success) {
                 localStorage.setItem("userId", data.data._id);
                 localStorage.setItem("role", data.data.role);
-                
+
                 if (data.data.role === "recruiter") {
                     navigate("/recruiter");
                 } else {
@@ -38,6 +39,25 @@ function Login() {
         } catch (err) {
             console.error("Login error:", err);
             alert("An error occurred during login.");
+        }
+    };
+
+    const handleGoogleLogin = async () => {
+        try {
+            const user = await loginWithGoogle();
+
+            localStorage.setItem("userId", user._id);
+            localStorage.setItem("role", user.role);
+
+            if (user.role === "recruiter") {
+                navigate("/recruiter");
+            } else {
+                navigate("/explore");
+            }
+
+        } catch (error) {
+            console.error(error);
+            alert("Google login failed");
         }
     };
 
@@ -92,7 +112,10 @@ function Login() {
 
                 <p className="or">Or continue with</p>
 
-                <button className="google-btn">
+                <button
+                    className="google-btn"
+                    onClick={handleGoogleLogin}
+                >
                     Continue with Google
                 </button>
 

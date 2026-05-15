@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const Job = require("../models/jobModels");
 
 // Create Job
@@ -46,7 +47,7 @@ const createJob = async (req, res) => {
 // Get All Jobs with Filter
 const getJobs = async (req, res) => {
     try {
-        const { keyword, industry, minSalary, maxSalary, lat, lng, radius } = req.query;
+        const { keyword, industry, minSalary, maxSalary, lat, lng, radius, status, recruiterId } = req.query;
 
         let query = {};
 
@@ -56,6 +57,23 @@ const getJobs = async (req, res) => {
 
         if (industry) {
             query.industry = industry;
+        }
+
+        if (recruiterId) {
+            // Ensure recruiterId is treated as ObjectId if valid
+            if (mongoose.Types.ObjectId.isValid(recruiterId)) {
+                query.recruiter = recruiterId;
+            } else {
+                query.recruiter = recruiterId; // Fallback to string if not valid ObjectId
+            }
+        }
+
+        // Status filtering
+        if (status && status !== "all") {
+            query.status = status;
+        } else if (!status && !recruiterId) {
+            // Default to pending for general browsing if no status and no recruiterId provided
+            query.status = "pending";
         }
 
         // Location based filtering (if radius, lat, lng provided)
@@ -114,14 +132,14 @@ const updateJob = async (req, res) => {
     try {
         const { 
             title, description, requirements, salary, industry, 
-            jobType, address, contactEmail, contactPhones, img 
+            jobType, address, contactEmail, contactPhones, img, status 
         } = req.body;
 
         const job = await Job.findByIdAndUpdate(
             req.params.id, 
             { 
                 title, description, requirements, salary, industry, 
-                jobType, address, contactEmail, contactPhones, img 
+                jobType, address, contactEmail, contactPhones, img, status 
             }, 
             { new: true }
         );
@@ -140,13 +158,13 @@ const updateJob = async (req, res) => {
     }
 };
 
-// Delete Job
+// Delete Job (Soft Delete)
 const deleteJob = async (req, res) => {
     try {
-        await Job.findByIdAndDelete(req.params.id);
+        await Job.findByIdAndUpdate(req.params.id, { status: "deleted" });
         res.status(200).json({
             success: true,
-            message: "Job deleted"
+            message: "Job marked as deleted"
         });
     } catch (error) {
         res.status(500).json({

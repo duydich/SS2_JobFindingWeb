@@ -32,6 +32,11 @@ const jobSchema = new mongoose.Schema({
     },
     company: { type: String },
     img: { type: String }, // Store image URL or base64
+    status: {
+        type: String,
+        enum: ["pending", "closed", "deleted"],
+        default: "pending"
+    },
     createdAt: {
         type: Date,
         default: Date.now

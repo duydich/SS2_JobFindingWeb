@@ -6,14 +6,17 @@ const userSchema = new mongoose.Schema({
 
     email: { type: String, required: true, unique: true },
 
-    password: { type: String, required: true },
+    password: {
+        type: String,
+        default: null,
+    },
 
     phone: String,
     location: String,
     title: String,
     bio: String,
     company: String,
-    website: String,
+    website: String,    
 
     role: {
         type: String,
@@ -22,6 +25,12 @@ const userSchema = new mongoose.Schema({
     },
 
     avatar: String,
+
+    provider: {
+        type: String,
+        enum: ["local", "google"],
+        default: "local",
+    },
 
     createdAt: {
         type: Date,
@@ -35,6 +44,5 @@ const userSchema = new mongoose.Schema({
 
 //Tao model User tu schema
 const User = mongoose.model("User", userSchema);
-
 
 module.exports = User;
