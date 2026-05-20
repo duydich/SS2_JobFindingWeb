@@ -100,3 +100,34 @@
 .status-rejected { background: #fee2e2; color: #dc2626; }
 .status-closed { background: #f1f5f9; color: #475569; }
 .status-deleted { background: #334155; color: #f8fafc; }
+
+.job-extra-action {
+    margin-top: 1.25rem;
+    padding-top: 1rem;
+    border-top: 1px solid #f1f5f9;
+}
+
+.withdraw-btn {
+    width: 100%;
+    padding: 0.6rem;
+    border-radius: 8px;
+    border: 1px solid #fee2e2;
+    background: #fff5f5;
+    color: #ef4444;
+    font-weight: 600;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.025em;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.withdraw-btn:hover {
+    background: #ef4444;
+    color: white;
+    border-color: #ef4444;
+    box-shadow: 0 4px 6px -1px rgba(239, 68, 68, 0.2);
+}

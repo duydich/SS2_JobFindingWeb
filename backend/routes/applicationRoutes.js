@@ -4,12 +4,14 @@ const {
     applyForJob,
     getStudentApplications,
     getRecruiterApplications,
-    updateApplicationStatus
+    updateApplicationStatus,
+    withdrawApplication
 } = require("../controllers/applicationControllers");
 
 router.post("/apply", applyForJob);
 router.get("/student/:studentId", getStudentApplications);
 router.get("/recruiter/:recruiterId", getRecruiterApplications);
 router.put("/:applicationId/status", updateApplicationStatus);
+router.delete("/:applicationId", withdrawApplication);
 
 module.exports = router;

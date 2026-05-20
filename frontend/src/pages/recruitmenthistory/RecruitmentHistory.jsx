@@ -134,19 +134,6 @@ function RecruitmentHistory() {
 
                         <section className="history-section">
                             <div className="section-title">
-                                <CheckCircle size={20} className="icon-closed" />
-                                <h2>Closed Jobs</h2>
-                            </div>
-                            <div className="job-grid">
-                                {filterJobs("closed").map(job => (
-                                    <JobCard key={job._id} job={job} onClick={() => navigate(`/job-preview/${job._id}`)} status={job.status} />
-                                ))}
-                                {filterJobs("closed").length === 0 && <p className="empty-msg">No closed jobs.</p>}
-                            </div>
-                        </section>
-
-                        <section className="history-section">
-                            <div className="section-title">
                                 <Trash2 size={20} className="icon-deleted" />
                                 <h2>Deleted Jobs</h2>
                             </div>

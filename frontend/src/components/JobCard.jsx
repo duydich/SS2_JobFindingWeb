@@ -2,7 +2,9 @@ import React from "react";
 import { Heart, MapPin, Briefcase } from "lucide-react";
 import "./jobcard.css";
 
-const JobCard = ({ job, onClick, onToggleSave, isSaved, status }) => {
+const JobCard = ({ job, onClick, onToggleSave, isSaved, status, extraAction }) => {
+    if (!job) return null;
+    
     return (
         <div className="job-card" onClick={onClick}>
             {job.img && <img src={job.img} alt={job.title} />}
@@ -32,6 +34,11 @@ const JobCard = ({ job, onClick, onToggleSave, isSaved, status }) => {
                 {status && (
                     <div className={`job-status status-${status.toLowerCase()}`}>
                         {status}
+                    </div>
+                )}
+                {extraAction && (
+                    <div className="job-extra-action" onClick={(e) => e.stopPropagation()}>
+                        {extraAction}
                     </div>
                 )}
             </div>

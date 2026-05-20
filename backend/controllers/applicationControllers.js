@@ -55,21 +55,20 @@ const getRecruiterApplications = async (req, res) => {
 };
 
 const updateApplicationStatus = async (req, res) => {
+// ... (keep existing)
+// ...
+};
+
+const withdrawApplication = async (req, res) => {
     try {
         const { applicationId } = req.params;
-        const { status } = req.body; // accepted, rejected
-
-        const application = await Application.findByIdAndUpdate(
-            applicationId,
-            { status },
-            { new: true }
-        );
+        const application = await Application.findByIdAndDelete(applicationId);
 
         if (!application) {
             return res.status(404).json({ success: false, message: "Application not found" });
         }
 
-        res.status(200).json({ success: true, data: application });
+        res.status(200).json({ success: true, message: "Application withdrawn successfully" });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
@@ -79,5 +78,6 @@ module.exports = {
     applyForJob,
     getStudentApplications,
     getRecruiterApplications,
-    updateApplicationStatus
+    updateApplicationStatus,
+    withdrawApplication
 };

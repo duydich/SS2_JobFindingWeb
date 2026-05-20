@@ -84,6 +84,7 @@ function SavedJobs() {
                                 onClick={() => navigate(`/job-preview/${job._id}`)}
                                 onToggleSave={handleToggleSave}
                                 isSaved={!isJobUnsaved(job._id)}
+                                status={job.status !== "pending" ? job.status : null}
                             />
                         ))}
                     </div>

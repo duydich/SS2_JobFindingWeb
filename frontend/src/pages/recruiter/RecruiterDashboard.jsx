@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Plus, Trash, Edit, Briefcase, LogOut, MapPin } from "lucide-react";
+import { Plus, Trash, Edit, Briefcase, LogOut, MapPin, Clock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import "./recruiterdashboard.css";
 
@@ -55,7 +55,7 @@ function RecruiterDashboard() {
                         <span>Post Job</span>
                     </div>
                     <div className="nav-item" onClick={() => navigate("/recruitment-history")}>
-                        <Briefcase size={18} />
+                        <Clock size={18} />
                         <span>History</span>
                     </div>
                     <div
