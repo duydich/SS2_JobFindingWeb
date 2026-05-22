@@ -46,7 +46,7 @@ function SearchPage() {
 
   const fetchUserProfile = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/profile/${currentUserId}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${currentUserId}`);
       const data = await res.json();
       if (data.success) setUser(data.data);
     } catch (err) { console.error(err); }
@@ -60,7 +60,7 @@ function SearchPage() {
       const salaryParam = searchParams.get("salary") || "";
       const locationParam = searchParams.get("location") || "";
       
-      let url = `http://localhost:5000/api/jobs?keyword=${keyword}`;
+      let url = `${import.meta.env.VITE_API_URL}/api/jobs?keyword=${keyword}`;
       const res = await fetch(url);
       const data = await res.json();
       
@@ -112,7 +112,7 @@ function SearchPage() {
 
   const fetchSavedJobIds = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/saved-jobs/${currentUserId}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/saved-jobs/${currentUserId}`);
       const data = await res.json();
       if (data.success) {
         setSavedJobIds(data.data.map(j => j._id));
@@ -142,7 +142,7 @@ function SearchPage() {
       return;
     }
     try {
-      const res = await fetch("http://localhost:5000/api/saved-jobs/toggle", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/saved-jobs/toggle`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: currentUserId, jobId })

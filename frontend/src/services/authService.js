@@ -16,7 +16,7 @@ export const loginWithGoogle = async (role = "student") => {
         const user = result.user;
 
         // Gửi lên backend
-        const res = await fetch("http://localhost:5000/api/google-auth", {
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/google-auth`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",

@@ -5,8 +5,11 @@ import "./studentprofile.css";
 
 function StudentProfile() {
     const [user, setUser] = useState(null);
+    const [aiReview, setAiReview] = useState("");
+    const [aiLoading, setAiLoading] = useState(false);
     const [searchParams] = useSearchParams();
     const fileInputRef = useRef(null);
+    const cvInputRef = useRef(null);
     const navigate = useNavigate();
     
     // Check if we are viewing someone else's profile
@@ -24,7 +27,7 @@ function StudentProfile() {
             }
 
             try {
-                const res = await fetch(`http://localhost:5000/api/profile/${targetId}`,
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${targetId}`,
                     {
                         method: "GET",
                         headers: {"Content-Type": "application/json"}
@@ -68,16 +71,102 @@ function StudentProfile() {
         }
     };
 
+    // HANDLE CV CHANGE
+    const handleCVChange = (e) => {
+        if (!isOwnProfile) return;
+        const file = e.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                handleChange("cv", {
+                    name: file.name,
+                    data: reader.result
+                });
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
+    // VIEW CV IN NEW TAB
+    const handleViewCV = () => {
+        if (!user.cv || !user.cv.data) return;
+        
+        try {
+            // Extract base64 content
+            const base64Data = user.cv.data.split(",")[1];
+            const contentType = user.cv.data.split(",")[0].split(":")[1].split(";")[0];
+            
+            const byteCharacters = atob(base64Data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: contentType });
+            
+            const fileURL = URL.createObjectURL(blob);
+            window.open(fileURL, "_blank");
+        } catch (err) {
+            console.error("Error viewing CV:", err);
+            // Fallback for simple data URI
+            const newWindow = window.open();
+            newWindow.document.write(`<iframe src="${user.cv.data}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
+        }
+    };
+
+    // REMOVE CV
+    const handleRemoveCV = () => {
+        if (!isOwnProfile) return;
+        if (window.confirm("Are you sure you want to remove your CV?")) {
+            setUser((prev) => ({
+                ...prev,
+                cv: { name: "", data: "" }
+            }));
+        }
+    };
+
+    // AI CV REVIEW
+    const handleAIReview = async () => {
+        if (!user.cv || !user.cv.data) {
+            alert("Please upload a CV first!");
+            return;
+        }
+
+        setAiLoading(true);
+        setAiReview("");
+
+        try {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/cv-review`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ cvData: user.cv.data })
+            });
+
+            const data = await res.json();
+            if (data.success) {
+                setAiReview(data.data);
+            } else {
+                alert("AI Review failed: " + data.message);
+            }
+        } catch (err) {
+            console.error("AI Review Error:", err);
+            alert("Server error during AI Review");
+        } finally {
+            setAiLoading(false);
+        }
+    };
+
     // SAVE PROFILE
     const handleSave = async () => {
         if (!isOwnProfile) return;
         
         // Clone user object and remove system fields
         const { _id, __v, createdAt, ...updateData } = user;
+        console.log("Data being sent to backend:", updateData);
 
         try {
             const res = await fetch(
-                `http://localhost:5000/api/update/${currentUserId}`,
+                `${import.meta.env.VITE_API_URL}/api/update/${currentUserId}`,
                 {
                     method: "PUT",
                     headers: {
@@ -179,6 +268,64 @@ function StudentProfile() {
                         />
                     </div>
 
+                    {/* CV UPLOAD */}
+                    <div className="card">
+                        <h4>Curriculum Vitae</h4>
+                        <div className="cv-box">
+                            {user.cv && user.cv.name ? (
+                                <div className="cv-info">
+                                    <span className="cv-name" onClick={handleViewCV} style={{ cursor: "pointer", color: "#2563eb", textDecoration: "underline" }}>
+                                        {user.cv.name}
+                                    </span>
+                                    <div className="cv-actions">
+                                        <button className="view-cv-btn" onClick={handleViewCV}>
+                                            View CV
+                                        </button>
+                                        {!isOwnProfile && (
+                                            <a 
+                                                href={user.cv.data} 
+                                                download={user.cv.name}
+                                                className="download-cv-btn"
+                                            >
+                                                Download
+                                            </a>
+                                        )}
+                                        {isOwnProfile && (
+                                            <>
+                                                <button className="ai-review-btn" onClick={handleAIReview}>
+                                                    ✨ AI Review
+                                                </button>
+                                                <button className="change-cv-btn" onClick={() => cvInputRef.current.click()}>
+                                                    Change
+                                                </button>
+                                                <button className="remove-cv-btn" onClick={handleRemoveCV}>
+                                                    Remove
+                                                </button>
+                                            </>
+                                        )}
+                                    </div>
+                                </div>
+                            ) : (
+                                <div className="cv-empty">
+                                    <p>No CV uploaded yet</p>
+                                    {isOwnProfile && (
+                                        <button className="upload-cv-btn" onClick={() => cvInputRef.current.click()}>
+                                            Upload CV
+                                        </button>
+                                    )}
+                                </div>
+                            )}
+                            <input
+                                type="file"
+                                ref={cvInputRef}
+                                style={{ display: "none" }}
+                                accept=".pdf,.doc,.docx"
+                                onChange={handleCVChange}
+                            />
+                        </div>
+                        <p className="hint">Accepted: PDF, DOC, DOCX (Max 10MB)</p>
+                    </div>
+
                 </div>
 
                 {/* RIGHT */}
@@ -207,6 +354,21 @@ function StudentProfile() {
                         />
                     </div>
 
+                    {/* AI REVIEW RESULT */}
+                    {aiReview && (
+                        <div className="card ai-result-card">
+                            <h4>✨ Gemini AI Feedback</h4>
+                            <div className="ai-content">
+                                {aiReview.split("\n").map((line, index) => {
+                                    if (line.startsWith("###")) return <h5 key={index}>{line.replace("###", "")}</h5>;
+                                    if (line.startsWith("**")) return <p key={index}><strong>{line.replace(/\*\*/g, "")}</strong></p>;
+                                    return <p key={index}>{line}</p>;
+                                })}
+                            </div>
+                            <button className="close-ai-btn" onClick={() => setAiReview("")}>Close Feedback</button>
+                        </div>
+                    )}
+
                     {/* EXTRA */}
                     <div className="card">
                         <h4>Extra Info</h4>
@@ -232,6 +394,16 @@ function StudentProfile() {
 
                 </div>
             </div>
+
+            {/* AI LOADING OVERLAY */}
+            {aiLoading && (
+                <div className="ai-overlay">
+                    <div className="ai-loader">
+                        <div className="spinner"></div>
+                        <p>Gemini AI is analyzing your CV...</p>
+                    </div>
+                </div>
+            )}
 
             {/* FOOTER */}
             {isOwnProfile && (

@@ -38,7 +38,7 @@ function RecruitmentHistory() {
 
     const fetchRecruiterJobs = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/jobs?recruiterId=${userId}&status=all`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/jobs?recruiterId=${userId}&status=all`);
             const data = await res.json();
             if (data.success) {
                 setJobs(data.data);
@@ -48,7 +48,7 @@ function RecruitmentHistory() {
 
     const fetchRecruiterApplications = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/applications/recruiter/${userId}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/recruiter/${userId}`);
             const data = await res.json();
             if (data.success) {
                 setApplications(data.data);
@@ -58,7 +58,7 @@ function RecruitmentHistory() {
 
     const handleUpdateAppStatus = async (appId, newStatus) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/applications/${appId}/status`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/${appId}/status`, {
                 method: "PUT",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ status: newStatus })
@@ -74,7 +74,7 @@ function RecruitmentHistory() {
     const openProfileModal = async (studentId) => {
         setFetchingProfile(true);
         try {
-            const res = await fetch(`http://localhost:5000/api/profile/${studentId}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${studentId}`);
             const data = await res.json();
             if (data.success) {
                 setSelectedStudent(data.data);
@@ -83,6 +83,27 @@ function RecruitmentHistory() {
             console.error("Fetch profile error:", err);
         } finally {
             setFetchingProfile(false);
+        }
+    };
+
+    const handleViewCV = (cv) => {
+        if (!cv || !cv.data) return;
+        try {
+            const base64Data = cv.data.split(",")[1];
+            const contentType = cv.data.split(",")[0].split(":")[1].split(";")[0];
+            const byteCharacters = atob(base64Data);
+            const byteNumbers = new Array(byteCharacters.length);
+            for (let i = 0; i < byteCharacters.length; i++) {
+                byteNumbers[i] = byteCharacters.charCodeAt(i);
+            }
+            const byteArray = new Uint8Array(byteNumbers);
+            const blob = new Blob([byteArray], { type: contentType });
+            const fileURL = URL.createObjectURL(blob);
+            window.open(fileURL, "_blank");
+        } catch (err) {
+            console.error("Error viewing CV:", err);
+            const newWindow = window.open();
+            newWindow.document.write(`<iframe src="${cv.data}" frameborder="0" style="border:0; top:0px; left:0px; bottom:0px; right:0px; width:100%; height:100%;" allowfullscreen></iframe>`);
         }
     };
 
@@ -267,6 +288,37 @@ function RecruitmentHistory() {
                             <div className="profile-bio">
                                 <label>Bio</label>
                                 <p>{selectedStudent.bio || "No bio available."}</p>
+                            </div>
+
+                            <div className="profile-cv-section">
+                                <label>Curriculum Vitae</label>
+                                {selectedStudent.cv && selectedStudent.cv.name ? (
+                                    <div className="modal-cv-container">
+                                        <div className="modal-cv-info">
+                                            <span 
+                                                className="modal-cv-name" 
+                                                onClick={() => handleViewCV(selectedStudent.cv)}
+                                                style={{ cursor: "pointer", color: "#2563eb", textDecoration: "underline", fontWeight: "500", fontSize: "14px", wordBreak: "break-all" }}
+                                            >
+                                                {selectedStudent.cv.name}
+                                            </span>
+                                        </div>
+                                        <div className="modal-cv-actions">
+                                            <button className="view-cv-btn" onClick={() => handleViewCV(selectedStudent.cv)}>
+                                                View CV
+                                            </button>
+                                            <a 
+                                                href={selectedStudent.cv.data} 
+                                                download={selectedStudent.cv.name}
+                                                className="download-cv-btn"
+                                            >
+                                                Download
+                                            </a>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <p className="no-cv-msg" style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>No CV uploaded.</p>
+                                )}
                             </div>
 
                             {selectedStudent.website && (

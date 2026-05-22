@@ -21,7 +21,7 @@ function SavedJobs() {
 
     const fetchSavedJobs = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/saved-jobs/${userId}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/saved-jobs/${userId}`);
             const data = await res.json();
             if (data.success) {
                 setJobs(data.data);
@@ -35,7 +35,7 @@ function SavedJobs() {
 
     const handleToggleSave = async (jobId) => {
         try {
-            const res = await fetch("http://localhost:5000/api/saved-jobs/toggle", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/saved-jobs/toggle`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId, jobId })

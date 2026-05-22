@@ -20,7 +20,7 @@ function EmploymentHistory() {
 
     const fetchStudentApplications = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/applications/student/${userId}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/student/${userId}`);
             const data = await res.json();
             if (data.success) {
                 setApplications(data.data);
@@ -36,7 +36,7 @@ function EmploymentHistory() {
         if (!window.confirm("Are you sure you want to withdraw this application?")) return;
 
         try {
-            const res = await fetch(`http://localhost:5000/api/applications/${appId}`, {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/${appId}`, {
                 method: "DELETE"
             });
             const data = await res.json();

@@ -26,6 +26,11 @@ const userSchema = new mongoose.Schema({
 
     avatar: String,
 
+    cv: {
+        name: String,
+        data: String,
+    },
+
     provider: {
         type: String,
         enum: ["local", "google"],

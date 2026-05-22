@@ -18,7 +18,7 @@ function RecruiterDashboard() {
     const fetchUserProfile = async () => {
         if (!userId) return;
         try {
-            const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${userId}`);
             const data = await res.json();
             if (data.success) setUser(data.data);
         } catch (err) {
@@ -27,7 +27,7 @@ function RecruiterDashboard() {
     };
 
     const fetchJobs = async () => {
-        const res = await fetch("http://localhost:5000/api/jobs");
+        const res = await fetch(`${import.meta.env.VITE_API_URL}/api/jobs`);
         const data = await res.json();
         if (data.success) {
             const myJobs = data.data.filter(j => j.recruiter === userId || j.recruiter?._id === userId);
@@ -37,7 +37,7 @@ function RecruiterDashboard() {
 
     const handleDelete = async (id) => {
         if (window.confirm("Delete this job?")) {
-            const res = await fetch(`http://localhost:5000/api/jobs/${id}`, { method: "DELETE" });
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/jobs/${id}`, { method: "DELETE" });
             const data = await res.json();
             if (data.success) fetchJobs();
         }

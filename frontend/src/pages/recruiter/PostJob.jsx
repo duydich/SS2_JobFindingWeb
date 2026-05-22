@@ -57,7 +57,7 @@ function PostJob() {
 
             // 2. Tải Profile (Chỉ lấy các trường contact nếu chúng đang trống)
             try {
-                const res = await fetch(`http://localhost:5000/api/profile/${userId}`);
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${userId}`);
                 const data = await res.json();
                 if (data.success) {
                     setFormData(prev => ({
@@ -72,7 +72,7 @@ function PostJob() {
             // 3. Tải Dữ liệu Job nếu là Edit
             if (id) {
                 try {
-                    const res = await fetch(`http://localhost:5000/api/jobs/${id}`);
+                    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/jobs/${id}`);
                     const data = await res.json();
                     if (data.success) {
                         console.log("🔍 DEBUG - Loaded Job Data:", data.data); // LOG DEBUG THEO YÊU CẦU
@@ -194,8 +194,8 @@ function PostJob() {
         };
 
         const url = id 
-            ? `http://localhost:5000/api/jobs/${id}`
-            : "http://localhost:5000/api/jobs/create";
+            ? `${import.meta.env.VITE_API_URL}/api/jobs/${id}`
+            : `${import.meta.env.VITE_API_URL}/api/jobs/create`;
         
         const method = id ? "PUT" : "POST";
 

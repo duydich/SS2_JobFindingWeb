@@ -42,14 +42,14 @@ function Explore() {
 
   const fetchUserProfile = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/profile/${currentUserId}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${currentUserId}`);
       const data = await res.json();
       if (data.success) setUser(data.data);
     } catch (err) { console.error(err); }
   };
 
   const fetchJobs = async () => {
-    const res = await fetch(`http://localhost:5000/api/jobs?keyword=${jobtitle}`);
+    const res = await fetch(`${import.meta.env.VITE_API_URL}/api/jobs?keyword=${jobtitle}`);
     const data = await res.json();
     if (data.success) setJobs(data.data);
   };
@@ -74,7 +74,7 @@ function Explore() {
 
   const fetchSavedJobIds = async () => {
     try {
-      const res = await fetch(`http://localhost:5000/api/saved-jobs/${currentUserId}`);
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/saved-jobs/${currentUserId}`);
       const data = await res.json();
       if (data.success) {
         setSavedJobIds(data.data.map(j => j._id));
@@ -90,7 +90,7 @@ function Explore() {
     }
     
     try {
-      const res = await fetch("http://localhost:5000/api/saved-jobs/toggle", {
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/saved-jobs/toggle`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ userId: currentUserId, jobId })

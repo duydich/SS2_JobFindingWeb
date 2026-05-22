@@ -6,13 +6,15 @@ const {
     register,
     googleAuth,
     getProfile,
-    updateUser
+    updateUser,
+    reviewCVWithAI
 } = require("../controllers/authControllers");
 
 // API login
 router.post("/register", register);
 router.post("/login", login);
 router.post("/google-auth", googleAuth);
+router.post("/cv-review", reviewCVWithAI);
 
 // API info
 router.get("/profile/:id", getProfile);

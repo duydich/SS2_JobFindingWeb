@@ -1,3 +1,4 @@
+require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
 const connectDB = require("./dbconfig/dbConnection");
@@ -35,7 +36,7 @@ app.use("/api/saved-jobs", savedJobRoutes);
 app.use("/api/applications", applicationRoutes);
 
 // Start server
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+    console.log(`Server running on port ${PORT}`);
 });

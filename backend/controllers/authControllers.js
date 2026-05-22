@@ -2,6 +2,8 @@ const User = require("../models/userModels");
 const bcrypt = require("bcryptjs");
 
 
+const { GoogleGenerativeAI } = require("@google/generative-ai");
+
 // ================= REGISTER =================
 const register = async (req, res) => {
     try {
@@ -236,4 +238,53 @@ const updateUser = async (req, res) => {
 };
 
 
-module.exports = { register, login, googleAuth, getProfile, updateUser };
+// ================= AI CV REVIEW =================
+const reviewCVWithAI = async (req, res) => {
+    try {
+        const { cvData } = req.body;
+        if (!cvData) {
+            return res.status(400).json({ success: false, message: "No CV data provided" });
+        }
+
+        // 1. Khởi tạo Gemini (Sử dụng model 'gemini-flash-latest' - bản ổn định nhất có sẵn trong tài khoản của bạn)
+        const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
+        const model = genAI.getGenerativeModel({ model: "gemini-flash-latest" });
+
+        // 2. Xử lý dữ liệu Base64
+        const parts = cvData.split(",");
+        const mimeType = parts[0].split(":")[1].split(";")[0];
+        const base64Data = parts[1];
+
+        // 3. Cấu hình Prompt theo yêu cầu của người dùng
+        const prompt = "Bạn là một chuyên gia tuyển dụng cao cấp. Hãy phân tích CV này và đưa ra nhận xét chi tiết bằng tiếng Việt bao gồm: 1. Điểm mạnh, 2. Các điểm cần cải thiện, 3. Đánh giá mức độ phù hợp chung và 4. Điểm số (0-10). Hãy trình bày thật chuyên nghiệp và rõ ràng dưới dạng Markdown.";
+
+        // 4. Gửi yêu cầu lên Gemini
+        const result = await model.generateContent([
+            { text: prompt },
+            {
+                inlineData: {
+                    mimeType: mimeType,
+                    data: base64Data
+                }
+            }
+        ]);
+
+        const response = await result.response;
+        const text = response.text();
+
+        return res.status(200).json({
+            success: true,
+            data: text
+        });
+    } catch (error) {
+        console.error("Gemini AI Error:", error);
+        return res.status(500).json({ 
+            success: false, 
+            message: "AI Review failed", 
+            error: error.message 
+        });
+    }
+};
+
+
+module.exports = { register, login, googleAuth, getProfile, updateUser, reviewCVWithAI };

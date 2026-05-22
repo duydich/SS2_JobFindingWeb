@@ -23,7 +23,7 @@ function JobPreview() {
 
     const fetchJobDetails = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/jobs/${id}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/jobs/${id}`);
             const data = await res.json();
             if (data.success) {
                 setJob(data.data);
@@ -40,7 +40,7 @@ function JobPreview() {
 
     const checkIfSaved = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/saved-jobs/${currentUserId}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/saved-jobs/${currentUserId}`);
             const data = await res.json();
             if (data.success) {
                 const savedIds = data.data.map(j => j._id);
@@ -53,7 +53,7 @@ function JobPreview() {
 
     const checkIfApplied = async () => {
         try {
-            const res = await fetch(`http://localhost:5000/api/applications/student/${currentUserId}`);
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/student/${currentUserId}`);
             const data = await res.json();
             if (data.success) {
                 const userApp = data.data.find(app => app.job?._id === id);
@@ -77,7 +77,7 @@ function JobPreview() {
         }
 
         try {
-            const res = await fetch("http://localhost:5000/api/applications/apply", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/applications/apply`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ studentId: currentUserId, jobId: id })
@@ -103,7 +103,7 @@ function JobPreview() {
         }
 
         try {
-            const res = await fetch("http://localhost:5000/api/saved-jobs/toggle", {
+            const res = await fetch(`${import.meta.env.VITE_API_URL}/api/saved-jobs/toggle`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({ userId: currentUserId, jobId: id })

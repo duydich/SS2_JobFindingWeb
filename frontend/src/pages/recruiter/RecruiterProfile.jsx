@@ -37,7 +37,7 @@ function RecruiterProfile() {
             }
 
             try {
-                const res = await fetch(`http://localhost:5000/api/profile/${userId}`,
+                const res = await fetch(`${import.meta.env.VITE_API_URL}/api/profile/${userId}`,
                     {
                         method: "GET",
                         headers: {"Content-Type": "application/json"}
@@ -100,7 +100,7 @@ function RecruiterProfile() {
 
         try {
             const res = await fetch(
-                `http://localhost:5000/api/update/${userId}`,
+                `${import.meta.env.VITE_API_URL}/api/update/${userId}`,
                 {
                     method: "PUT",
                     headers: {
