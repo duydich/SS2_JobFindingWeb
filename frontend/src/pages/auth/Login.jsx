@@ -118,6 +118,11 @@ function Login() {
                     className="google-btn"
                     onClick={handleGoogleLogin}
                 >
+                    <img
+                        src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                        alt="G"
+                        width="18"
+                    />
                     Continue with Google
                 </button>
 
