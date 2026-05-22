@@ -35,7 +35,7 @@ export const loginWithGoogle = async (role = "student") => {
             throw new Error(data.message);
         }
 
-        return data.data;
+        return { data: data.data, token: data.token };
 
     } catch (error) {
         console.error("Google Login Error:", error);

@@ -38,12 +38,13 @@ function Register() {
         try {
             const role = isRecruiter ? "recruiter" : "student";
 
-            const user = await loginWithGoogle(role);
+            const result = await loginWithGoogle(role);
 
-            localStorage.setItem("userId", user._id);
-            localStorage.setItem("role", user.role);
+            localStorage.setItem("token", result.token);
+            localStorage.setItem("userId", result.data._id);
+            localStorage.setItem("role", result.data.role);
 
-            if (user.role === "recruiter") {
+            if (result.data.role === "recruiter") {
                 navigate("/recruiter");
             } else {
                 navigate("/explore");

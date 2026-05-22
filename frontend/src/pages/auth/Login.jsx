@@ -25,6 +25,7 @@ function Login() {
             const data = await res.json();
 
             if (data.success) {
+                localStorage.setItem("token", data.token);
                 localStorage.setItem("userId", data.data._id);
                 localStorage.setItem("role", data.data.role);
 
@@ -44,12 +45,13 @@ function Login() {
 
     const handleGoogleLogin = async () => {
         try {
-            const user = await loginWithGoogle();
+            const result = await loginWithGoogle();
 
-            localStorage.setItem("userId", user._id);
-            localStorage.setItem("role", user.role);
+            localStorage.setItem("token", result.token);
+            localStorage.setItem("userId", result.data._id);
+            localStorage.setItem("role", result.data.role);
 
-            if (user.role === "recruiter") {
+            if (result.data.role === "recruiter") {
                 navigate("/recruiter");
             } else {
                 navigate("/explore");
